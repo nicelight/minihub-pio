@@ -15,10 +15,8 @@ Data data;
 
 //main.cpp
 #include "data.h"
-// переменная data уже видна тут 
+// переменная data уже видна тут
 */
-
-
 
 #pragma once
 #include <Arduino.h>
@@ -26,8 +24,9 @@ Data data;
 struct Data // обьявляем класс структуры
 {
   uint32_t secondsNow = 12;
+  uint32_t secondsUptime = 1;
+  
   int number = 123456;
-
   String label = "label";
   bool led = 1;
   String paragr = "paragraph";
@@ -43,4 +42,3 @@ struct Data // обьявляем класс структуры
 };
 
 extern Data data; // объявляем что у нас будет переменная data класса Data
-

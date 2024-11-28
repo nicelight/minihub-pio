@@ -4,8 +4,27 @@
 #include <GyverDBFile.h>
 #include <SettingsGyver.h>
 
-DB_KEYS(
+DB_KEYS( // ключи по которым идет привязка к базе и к виджетам в web 
     kk,
+    wifi_ssid,
+    wifi_pass,
+    apply,
+    secondsNow,
+    secondsUptime,
+    t1Discr_startTime,
+    t1Discr_endTime,
+
+    t1f1_startTime,
+    t1f2_startTime,
+    t1f2_dim,
+    t1f3_startTime,
+    t1f3_dim,
+    t1f4_startTime,
+    t1f4_dim,
+    t1f5_startTime,
+    t1_stopTime,
+
+
     txt,
     pass,
     uintw,
@@ -21,15 +40,10 @@ DB_KEYS(
     lbl2,
 
     date,
-    t1f1_startTime,
     datime,
-    secondsNow,
 
     btn1,
-    btn2,
-    wifi_ssid,
-    wifi_pass,
-    apply
+    btn2
 
 );
 
