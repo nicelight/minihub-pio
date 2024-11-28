@@ -8,10 +8,6 @@
 #define WIFI ""
 #define WIFIPASS ""
 #define INDIKATOR 2 // на каком пине индикаторный светодиод
-#define RELE_1 13
-#define RELE_2 14
-#define ON 0  // включение релюшек логическим нулем или единицей
-#define OFF 1 //
 
 #include <Arduino.h>
 #include "timer.h"
@@ -29,6 +25,7 @@
 #include <GyverNTP.h>
 #include "data.h" // тут лежит структура data по кошерному
 #include "settings.h"
+#include "userTimers.h"
 
 // обявление фкнций для их видимости из вкладок.
 
@@ -62,8 +59,23 @@ void setup()
   db.begin();
   db.init(kk::wifi_ssid, WIFI);
   db.init(kk::wifi_pass, WIFIPASS);
+  db.init(kk::t1Discr_enabled, 0);
   db.init(kk::t1Discr_startTime, 21600ul);
   db.init(kk::t1Discr_endTime, 72000ul);
+  db.init(kk::t2Discr_enabled, 0);
+  db.init(kk::t2Discr_startTime, 21600ul);
+  db.init(kk::t2Discr_endTime, 72000ul);
+  db.init(kk::t3Discr_enabled, 0);
+  db.init(kk::t3Discr_startTime, 21600ul);
+  db.init(kk::t3Discr_endTime, 72000ul);
+  db.init(kk::t4Discr_enabled, 0);
+  db.init(kk::t4Discr_startTime, 21600ul);
+  db.init(kk::t4Discr_endTime, 72000ul);
+  db.init(kk::t5Discr_enabled, 0);
+  db.init(kk::t5Discr_startTime, 21600ul);
+  db.init(kk::t5Discr_endTime, 72000ul);
+
+  db.init(kk::t1f_enabled, 0);
   db.init(kk::t1f1_startTime, 19800ul);
   db.init(kk::t1f2_startTime, 19800ul);
   db.init(kk::t1f2_dim, 70);
@@ -108,10 +120,7 @@ void setup()
   NTP.begin(5);       // часовой пояс. Для Москвы: 3. Худжанд, Нск 5. Обновляться раз в 600 сек
   NTP.setPeriod(600); // обновлять раз в 600 сек
   NTP.tick();
-  pinMode(RELE_1, OUTPUT);
-  digitalWrite(RELE_1, OFF);
-  pinMode(RELE_2, OUTPUT);
-  digitalWrite(RELE_2, OFF);
+  init_relays();
 
 } // setup
 
@@ -143,7 +152,7 @@ void loop()
   } // each60Sec
 
   if (eachSec.ready())
-  { // раз в сек
+  {                // раз в сек
     if (initially) // костыль для подхвата ntp, потому что если ntp отвалился, нельзя все время его чекать, мы его выше чекаем раз в минуту всего
     {
       initially--;
@@ -152,4 +161,6 @@ void loop()
     data.secondsNow++;    // инкермент реалтайм
     data.secondsUptime++; // инкермент аптайм
   }
+
+   userTimers();
 } // loop

@@ -68,32 +68,55 @@ void build(sets::Builder &b)
     // b.Time(kk::secondsUptime, "Аптайм", 0x3995db);
     b.Time(kk::secondsNow, "Вермечко");
     b.Time(kk::secondsUptime, "Аптайм");
+  }
+
+  {
+    sets::Group g(b, "Суточные таймеры");
+    if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
+      b.reload();
+    if (db[kk::t1Discr_enabled])
+    {
+      b.Time(kk::t1Discr_startTime, "Включается в");
+      b.Time(kk::t1Discr_endTime, ".. и включается в");
     }
+    if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
+      b.reload();
+    if (db[kk::t2Discr_enabled])
+    {
+      b.Time(kk::t2Discr_startTime, "ON");
+      b.Time(kk::t2Discr_endTime, ".. OFF");
+    }
+    if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
+      b.reload();
+    if (db[kk::t3Discr_enabled])
+    {
+
+      b.Time(kk::t3Discr_startTime, "ON");
+      b.Time(kk::t3Discr_endTime, "OFF");
+      //    b.Time("", &data.secondsStart);// так было
+    }
+  } // ОСВЕЩЕНИЕ
 
   {
-    sets::Group g(b, "освещение Вкл/Выкл ");
-    b.Time(kk::t1Discr_startTime, "Реле света включается в");
-    b.Time(kk::t1Discr_endTime, ".. и включается в");
-    //    b.Time("", &data.secondsStart);// так было
-  }
-  {
+    /* аквариумистика */
     sets::Group g(b, "Природное освещение");
-    b.Time(kk::t1f1_startTime, "Рассвет начинается с");
-    b.Time(kk::t1f2_startTime, "Утро с");
+    if (b.Switch(kk::t1f_enabled, "Включить"))
+      b.reload();
+    if (db[kk::t1f_enabled])
+    {
+      b.Time(kk::t1f1_startTime, "Рассвет начинается с");
+      b.Time(kk::t1f2_startTime, "Утро с");
+      b.Slider(kk::t1f2_dim, "яркость утром");
+      b.Time(kk::t1f3_startTime, "День с");
+      b.Slider(kk::t1f3_dim, "яркость днем");
+      b.Time(kk::t1f4_startTime, "Вечер  с");
+      b.Slider(kk::t1f4_dim, "яркость вечером");
+      b.Time(kk::t1f5_startTime, "Закат начинается");
+      b.Time(kk::t1_stopTime, "полная тьма к");
+    } // if enabled
+  } // природное освещение
+  /* аквариумистика */
 
-    // b.Slider(Text label = "", float min = 0, float max = 100, float step = 1, Text unit = Text(), AnyPtr value = nullptr);
-
-    b.Slider(kk::t1f2_dim, "яркость утром");
-    b.Time(kk::t1f3_startTime, "День с");
-    b.Slider(kk::t1f3_dim, "яркость днем");
-    b.Time(kk::t1f4_startTime, "Вечер  с");
-    b.Slider(kk::t1f4_dim, "яркость вечером");
-    b.Time(kk::t1f5_startTime, "Закат начинается");
-    b.Time(kk::t1_stopTime, "полная тьма к");
-  }
-
-  // вне группы. Так тоже можно
-  b.Switch(kk::toggle, "тыр-тырка");
   {
     sets::Group g(b, "Group 3");
     b.Label(kk::lbl1, "lable1");
@@ -107,8 +130,11 @@ void build(sets::Builder &b)
     b.Slider(kk::slider, "Slider", -10, 10, 0.5, "deg");
   }
 
+  // вне группы. Так тоже можно
+  b.Switch(kk::toggle, "тыр-тырка");
+
   {
-    sets::Group g(b, "Group3");
+    sets::Group g(b, "Пристройки");
     {
       sets::Menu g(b, "расширенные");
       b.Input(kk::txt, "Text");
