@@ -1,5 +1,3 @@
-.pio/build/
-!.pio/build/esp32doit-devkit-v1/
 .pio/build/esp32doit-devkit-v1/*
 !.pio/build/esp32doit-devkit-v1/firmware.bin
 
