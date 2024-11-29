@@ -1,6 +1,6 @@
 #include "data.h" // тут лежит структура data по кошерному
 #include "settings.h"
-
+#include "nastroyki.h"
 #include <GyverNTP.h>
 #include <LittleFS.h>
 #include <SettingsGyver.h>
@@ -11,6 +11,11 @@
 
 GyverDBFile db(&LittleFS, "/nicelight.db");     // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Горошек для любимой", &db); // указывается заголовок меню, подключается база данных
+
+// //считаем с базы значения
+// void readBase(){
+
+// }
 
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 void update(sets::Updater &upd)
@@ -72,27 +77,55 @@ void build(sets::Builder &b)
 
   {
     sets::Group g(b, "Суточные таймеры");
-    if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
+    // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
+    if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name])) // Реле 1
       b.reload();
-    if (db[kk::t1Discr_enabled])
+    if (db[kk::t1Discr_enabled].toBool())
     {
-      b.Time(kk::t1Discr_startTime, "Включается в");
-      b.Time(kk::t1Discr_endTime, ".. и включается в");
+      // b.LED(" ", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow); // не обновляется динамически
+      b.Time(kk::t1Discr_startTime, "Включается в ..");
+      b.Time(kk::t1Discr_endTime, ".. и отключается в");
     }
-    if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
+    // if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
+    if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name])) // Реле 2
       b.reload();
-    if (db[kk::t2Discr_enabled])
+    if (db[kk::t2Discr_enabled].toBool())
     {
+      // b.LED(" ", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
       b.Time(kk::t2Discr_startTime, "ON");
       b.Time(kk::t2Discr_endTime, ".. OFF");
     }
-    if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
+    // if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
+    if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name])) // Реле 3
       b.reload();
-    if (db[kk::t3Discr_enabled])
+    if (db[kk::t3Discr_enabled].toBool())
     {
 
+      // b.LED(" ", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
       b.Time(kk::t3Discr_startTime, "ON");
       b.Time(kk::t3Discr_endTime, "OFF");
+      //    b.Time("", &data.secondsStart);// так было
+    }
+    // if (b.Switch(kk::t4Discr_enabled, " Реле 4"))
+    if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name])) // Реле 4
+      b.reload();
+    if (db[kk::t4Discr_enabled].toBool())
+    {
+
+      // b.LED(" ", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
+      b.Time(kk::t4Discr_startTime, "ON");
+      b.Time(kk::t4Discr_endTime, "OFF");
+      //    b.Time("", &data.secondsStart);// так было
+    }
+    // if (b.Switch(kk::t5Discr_enabled, " Реле 5"))
+    if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name])) // Реле 5
+      b.reload();
+    if (db[kk::t5Discr_enabled].toBool())
+    {
+
+      // b.LED(" ", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
+      b.Time(kk::t5Discr_startTime, "ON");
+      b.Time(kk::t5Discr_endTime, "OFF");
       //    b.Time("", &data.secondsStart);// так было
     }
   } // ОСВЕЩЕНИЕ
@@ -102,7 +135,7 @@ void build(sets::Builder &b)
     sets::Group g(b, "Природное освещение");
     if (b.Switch(kk::t1f_enabled, "Включить"))
       b.reload();
-    if (db[kk::t1f_enabled])
+    if (db[kk::t1f_enabled].toBool())
     {
       b.Time(kk::t1f1_startTime, "Рассвет начинается с");
       b.Time(kk::t1f2_startTime, "Утро с");
@@ -118,81 +151,105 @@ void build(sets::Builder &b)
   /* аквариумистика */
 
   {
-    sets::Group g(b, "Group 3");
-    b.Label(kk::lbl1, "lable1");
-    b.Label(kk::lbl2, "millis()", "", sets::Colors::Red);
-    b.Date(kk::date, "Date");
-    b.DateTime(kk::datime, "Datime");
-
-    b.Color(kk::color, "Color");
-    //    b.Switch(kk::toggle2, "Switch");
-    b.Select(kk::selectw, "Select", "var1;var2;hello");
-    b.Slider(kk::slider, "Slider", -10, 10, 0.5, "deg");
-  }
-
-  // вне группы. Так тоже можно
-  b.Switch(kk::toggle, "тыр-тырка");
-
-  {
-    sets::Group g(b, "Пристройки");
+    // sets::Group g(b, "Подстройки");
+    sets::Group g(b, " ");
     {
-      sets::Menu g(b, "расширенные");
-      b.Input(kk::txt, "Text");
-      b.Pass(kk::pass, "Password");
-      b.Input(kk::uintw, "uint");
+      sets::Menu g(b, "Подстройки");
 
       {
-        sets::Group g(b, "грвГр");
-        b.Input("intw"_h, "int");
-        b.Switch("sw1"_h, "switch 1");
-      }
-      //      b.Input(kk::intw, "int");
-      b.Input(kk::int64w, "int 64");
-      // тут тоже могут быть группы
-      {
-        sets::Group g(b, "тумблерки");
-        b.Switch("sw2"_h, "switch 2");
-        b.Switch("sw3"_h, "switch 3");
+        sets::Menu g(b, "Интерфейс");
+        /*
+              //пример изменения имени виджета
+              b.Input(kk::btnName, "новое имя кнопки:");
+              if(b.Button(kk::btnflex, db[kk::btnName], db[kk::btnColor])) b.reload();
+        */
+
+        b.Input(kk::t1Discr_name, "Имя Реле1:");
+        b.Input(kk::t2Discr_name, "Имя Реле1:");
+        b.Input(kk::t3Discr_name, "Имя Реле1:");
+        b.Input(kk::t4Discr_name, "Имя Реле1:");
+        b.Input(kk::t5Discr_name, "Имя Реле1:");
       }
       {
-        sets::Group g(b, "настройки WiFi");
-        b.Input(kk::wifi_ssid, "SSID");
-        b.Pass(kk::wifi_pass, "Password");
-        if (b.Button(kk::apply, "Save & Restart"))
+        sets::Menu g(b, "Расширенные");
+        /// провалились в расширенные пристройки
         {
-          db.update(); // сохраняем БД не дожидаясь таймаута
-          WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
-          notice_f = true;
-          //          ESP.restart();
-        } // button Save
-      } // настройки wifi
+          sets::Group g(b, "настройки WiFi");
+          b.Input(kk::wifi_ssid, "SSID");
+          b.Pass(kk::wifi_pass, "Password");
+          if (b.Button(kk::apply, "Save & Restart"))
+          {
+            db.update(); // сохраняем БД не дожидаясь таймаута
+            WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
+            notice_f = true;
+            //          ESP.restart();
+          } // button Save
+        } // настройки wifi
 
-      // и просто виджеты
-      b.Label("lbl3"_h, "Another label", "Val", sets::Colors::Green);
-      b.Label("lbl4"_h, "Привет", "Val", sets::Colors::Blue);
+        // и просто виджеты
+        b.Label("lbl3"_h, "Another label", "Val", sets::Colors::Green);
+        b.Label("lbl4"_h, "Привет", "Val", sets::Colors::Blue);
 
-      ////////////////////
-      // кнопки являются "групповым" виджетом, можно сделать несколько кнопок в одной строке
-      if (b.beginButtons())
+        // кнопки являются "групповым" виджетом, можно сделать несколько кнопок в одной строке
+        if (b.beginButtons())
+        {
+          // кнопка вернёт true при клике
+          if (b.Button(kk::btn1, "reload"))
+          {
+            Serial.println("reload");
+            b.reload();
+          }
+
+          if (b.Button(kk::btn2, "стереть базу(нет)", sets::Colors::Blue))
+          {
+            Serial.println("could clear db");
+            // db.clear();
+            // db.update();
+          }
+          b.endButtons(); // завершить кнопки
+        }
+      } // Расширенные
+
       {
-        // кнопка вернёт true при клике
-        if (b.Button(kk::btn1, "reload"))
+        sets::Menu g(b, "примеры");
+        b.Input(kk::txt, "Text");
+        b.Pass(kk::pass, "Password");
+        b.Input(kk::uintw, "uint");
+
         {
-          Serial.println("reload");
-          b.reload();
+          sets::Group g(b, "групка");
+          // пример изменения имени виджета
+          b.Input(kk::btnName, "новое имя кнопки:");
+          if (b.Button(kk::btnflex, db[kk::btnName], db[kk::btnColor]))
+            b.reload();
+          b.Input("intw"_h, "int");
+          b.Switch("sw1"_h, "switch 1");
+        }
+        //      b.Input(kk::intw, "int");
+        b.Input(kk::int64w, "int 64");
+        // тут тоже могут быть группы
+        {
+          sets::Group g(b, "тумблерки");
+          b.Switch("sw2"_h, "switch 2");
+          b.Switch("sw3"_h, "switch 3");
         }
 
-        if (b.Button(kk::btn2, "clear db", sets::Colors::Blue))
         {
-          Serial.println("clear db");
-          db.clear();
-          db.update();
+          sets::Group g(b, "Group 3");
+          b.Label(kk::lbl1, "lable1");
+          b.Label(kk::lbl2, "millis()", "", sets::Colors::Red);
+          b.Date(kk::date, "Date");
+          b.DateTime(kk::datime, "Datime");
+          b.Color(kk::color, "Color");
+          //    b.Switch(kk::toggle2, "Switch");
+          b.Select(kk::selectw, "Select", "var1;var2;hello");
+          b.Slider(kk::slider, "Slider", -10, 10, 0.5, "deg");
         }
-        /////////////////////
-        b.endButtons(); // завершить кнопки
-      }
-    } // подменю
 
-  } // group3
+        // вне группы. Так тоже можно
+        b.Switch(kk::toggle, "тыр-тырка");
+      } // Menu-примеры
+    }
+  } // Подстройки
 
 } // builder

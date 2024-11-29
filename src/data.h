@@ -25,6 +25,11 @@ struct Data // обьявляем класс структуры
 {
   uint32_t secondsNow = 12;
   uint32_t secondsUptime = 1;
+  bool rel1_on = 0;
+  bool rel2_on = 0;
+  bool rel3_on = 0;
+  bool rel4_on = 0;
+  bool rel5_on = 0;
   
   int number = 123456;
   String label = "label";
@@ -42,3 +47,22 @@ struct Data // обьявляем класс структуры
 };
 
 extern Data data; // объявляем что у нас будет переменная data класса Data
+
+// bool    t1Discr_enabled,
+// uint32_t    t1Discr_startTime,
+// uint32_t    t1Discr_endTime,
+
+// bool    t2Discr_enabled,
+// uint32_t    t2Discr_startTime,
+// uint32_t    t2Discr_endTime,
+// bool    t3Discr_enabled,
+// uint32_t    t3Discr_startTime,
+// uint32_t    t3Discr_endTime,
+
+// bool    t4Discr_enabled,
+// uint32_t    t4Discr_startTime,
+// uint32_t    t4Discr_endTime,
+
+// bool    t5Discr_enabled,
+// uint32_t    t5Discr_startTime,
+// uint32_t    t5Discr_endTime,

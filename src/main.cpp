@@ -3,12 +3,6 @@
 // прошивка тут
 // C:\Users\Acer\Documents\PlatformIO\Projects\minihub\.pio\build\esp32doit-devkit-v1
 
-// имя пароль вашей домашней сети
-// можно ввести, подключившись к ESP AP c паролем 1234567890
-#define WIFI ""
-#define WIFIPASS ""
-#define INDIKATOR 2 // на каком пине индикаторный светодиод
-
 #include <Arduino.h>
 #include "timer.h"
 #include "led.h"
@@ -26,6 +20,7 @@
 #include "data.h" // тут лежит структура data по кошерному
 #include "settings.h"
 #include "userTimers.h"
+#include "nastroyki.h"
 
 // обявление фкнций для их видимости из вкладок.
 
@@ -59,18 +54,23 @@ void setup()
   db.begin();
   db.init(kk::wifi_ssid, WIFI);
   db.init(kk::wifi_pass, WIFIPASS);
+  db.init(kk::t1Discr_name, "Реле 1");
   db.init(kk::t1Discr_enabled, 0);
   db.init(kk::t1Discr_startTime, 21600ul);
   db.init(kk::t1Discr_endTime, 72000ul);
+  db.init(kk::t2Discr_name, "Реле 2");
   db.init(kk::t2Discr_enabled, 0);
   db.init(kk::t2Discr_startTime, 21600ul);
   db.init(kk::t2Discr_endTime, 72000ul);
+  db.init(kk::t3Discr_name, "Реле 3");
   db.init(kk::t3Discr_enabled, 0);
   db.init(kk::t3Discr_startTime, 21600ul);
   db.init(kk::t3Discr_endTime, 72000ul);
+  db.init(kk::t4Discr_name, "Реле 4");
   db.init(kk::t4Discr_enabled, 0);
   db.init(kk::t4Discr_startTime, 21600ul);
   db.init(kk::t4Discr_endTime, 72000ul);
+  db.init(kk::t5Discr_name, "Реле 5");
   db.init(kk::t5Discr_enabled, 0);
   db.init(kk::t5Discr_startTime, 21600ul);
   db.init(kk::t5Discr_endTime, 72000ul);
@@ -85,6 +85,9 @@ void setup()
   db.init(kk::t1f4_dim, 80);
   db.init(kk::t1f5_startTime, 19800ul);
   db.init(kk::t1_stopTime, 72000ul);
+
+  db.init(kk::btnName, "имечко кнопоньки");
+  db.init(kk::btnColor, 0xff00aa);
   //  db.init(kk::txt, "text");   // инициализация базы данных
   //  db.init(kk::slider, -3.5);
   //  db.init(kk::pass, "some pass");
@@ -135,7 +138,6 @@ void loop()
     // поддержка NTP
     // делаем тут, а не в лупе,
     // чтобы при отпадении интернета все не зависало
-    NTP.tick();
 
     if (!NTP.status() && NTP.synced())
     {
@@ -152,7 +154,10 @@ void loop()
   } // each60Sec
 
   if (eachSec.ready())
-  {                // раз в сек
+  { // раз в сек
+
+    NTP.tick();
+
     if (initially) // костыль для подхвата ntp, потому что если ntp отвалился, нельзя все время его чекать, мы его выше чекаем раз в минуту всего
     {
       initially--;
@@ -162,5 +167,5 @@ void loop()
     data.secondsUptime++; // инкермент аптайм
   }
 
-   userTimers();
+  userTimers();
 } // loop

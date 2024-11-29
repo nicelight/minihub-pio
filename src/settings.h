@@ -11,18 +11,23 @@ DB_KEYS( // ключи по которым идет привязка к базе
     apply,
     secondsNow,
     secondsUptime,
+    t1Discr_name,
     t1Discr_enabled,
     t1Discr_startTime,
     t1Discr_endTime,
+    t2Discr_name,
     t2Discr_enabled,
     t2Discr_startTime,
     t2Discr_endTime,
+    t3Discr_name,
     t3Discr_enabled,
     t3Discr_startTime,
     t3Discr_endTime,
+    t4Discr_name,
     t4Discr_enabled,
     t4Discr_startTime,
     t4Discr_endTime,
+    t5Discr_name,
     t5Discr_enabled,
     t5Discr_startTime,
     t5Discr_endTime,
@@ -38,6 +43,9 @@ DB_KEYS( // ключи по которым идет привязка к базе
     t1f5_startTime,
     t1_stopTime,
 
+    btnflex,
+    btnName,
+    btnColor,
     txt,
     pass,
     uintw,
@@ -61,7 +69,7 @@ DB_KEYS( // ключи по которым идет привязка к базе
 );
 
 static bool notice_f; // флаг на отправку уведомления о подключении к wifi
-
+static bool rel1_on = 0; // флаг о том что реле включено
 extern GyverDBFile db; // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 extern SettingsGyver sett;
 
