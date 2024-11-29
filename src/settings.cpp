@@ -25,6 +25,12 @@ void update(sets::Updater &upd)
   upd.update(kk::secondsUptime, data.secondsUptime);
   upd.update("lbl1"_h, random(100));
   upd.update("lbl2"_h, millis());
+  // upd.update(kk::t1Discr_led, data.rel1_on);
+  upd.update("t1Discr_led"_h, data.rel1_on);
+  upd.update("t2Discr_led"_h, data.rel2_on);
+  upd.update("t3Discr_led"_h, data.rel3_on);
+  upd.update("t4Discr_led"_h, data.rel4_on);
+  upd.update("t5Discr_led"_h, data.rel5_on);
   if (notice_f) // уведомление при вводе wifi данных
   {
     notice_f = false;
@@ -75,6 +81,7 @@ void build(sets::Builder &b)
     b.Time(kk::secondsUptime, "Аптайм");
   }
 
+
   {
     sets::Group g(b, "Суточные таймеры");
     // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
@@ -82,7 +89,9 @@ void build(sets::Builder &b)
       b.reload();
     if (db[kk::t1Discr_enabled].toBool())
     {
-      // b.LED(" ", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow); // не обновляется динамически
+      // b.LED("t1Discr_led"_h, "сстатус", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow); 
+      b.LED("t1Discr_led"_h, "Cтатус >>>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow); 
+      // b.Time(kk::t1Discr_startTime, "Включается в ..", 0xf7e5b2);
       b.Time(kk::t1Discr_startTime, "Включается в ..");
       b.Time(kk::t1Discr_endTime, ".. и отключается в");
     }
@@ -91,7 +100,7 @@ void build(sets::Builder &b)
       b.reload();
     if (db[kk::t2Discr_enabled].toBool())
     {
-      // b.LED(" ", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
+      b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
       b.Time(kk::t2Discr_startTime, "ON");
       b.Time(kk::t2Discr_endTime, ".. OFF");
     }
@@ -101,7 +110,7 @@ void build(sets::Builder &b)
     if (db[kk::t3Discr_enabled].toBool())
     {
 
-      // b.LED(" ", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
+      b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
       b.Time(kk::t3Discr_startTime, "ON");
       b.Time(kk::t3Discr_endTime, "OFF");
       //    b.Time("", &data.secondsStart);// так было
@@ -112,7 +121,7 @@ void build(sets::Builder &b)
     if (db[kk::t4Discr_enabled].toBool())
     {
 
-      // b.LED(" ", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
+      b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
       b.Time(kk::t4Discr_startTime, "ON");
       b.Time(kk::t4Discr_endTime, "OFF");
       //    b.Time("", &data.secondsStart);// так было
@@ -123,7 +132,7 @@ void build(sets::Builder &b)
     if (db[kk::t5Discr_enabled].toBool())
     {
 
-      // b.LED(" ", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
+      b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
       b.Time(kk::t5Discr_startTime, "ON");
       b.Time(kk::t5Discr_endTime, "OFF");
       //    b.Time("", &data.secondsStart);// так было

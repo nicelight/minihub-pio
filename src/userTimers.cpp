@@ -32,7 +32,6 @@ void userTimers()
             {
                 if (!data.rel1_on) // avoid extra digWrite
                 {
-
                     digitalWrite(RELE_1, ON);
                     data.rel1_on = 1;
                 }
