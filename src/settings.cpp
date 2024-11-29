@@ -81,7 +81,6 @@ void build(sets::Builder &b)
     b.Time(kk::secondsUptime, "Аптайм");
   }
 
-
   {
     sets::Group g(b, "Суточные таймеры");
     // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
@@ -89,11 +88,12 @@ void build(sets::Builder &b)
       b.reload();
     if (db[kk::t1Discr_enabled].toBool())
     {
-      // b.LED("t1Discr_led"_h, "сстатус", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow); 
-      b.LED("t1Discr_led"_h, "Cтатус >>>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow); 
+      // b.LED("t1Discr_led"_h, "сстатус", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
+      b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
       // b.Time(kk::t1Discr_startTime, "Включается в ..", 0xf7e5b2);
       b.Time(kk::t1Discr_startTime, "Включается в ..");
       b.Time(kk::t1Discr_endTime, ".. и отключается в");
+      b.Label(" ", " ");
     }
     // if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
     if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name])) // Реле 2
@@ -101,8 +101,9 @@ void build(sets::Builder &b)
     if (db[kk::t2Discr_enabled].toBool())
     {
       b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
-      b.Time(kk::t2Discr_startTime, "ON");
-      b.Time(kk::t2Discr_endTime, ".. OFF");
+      b.Time(kk::t2Discr_startTime, "Вкл в ..");
+      b.Time(kk::t2Discr_endTime, ".. откл ");
+      b.Label(" ", " ");
     }
     // if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
     if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name])) // Реле 3
@@ -111,8 +112,9 @@ void build(sets::Builder &b)
     {
 
       b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
-      b.Time(kk::t3Discr_startTime, "ON");
-      b.Time(kk::t3Discr_endTime, "OFF");
+      b.Time(kk::t3Discr_startTime, "Вкл в ..");
+      b.Time(kk::t3Discr_endTime, ".. откл");
+      b.Label(" ", " ");
       //    b.Time("", &data.secondsStart);// так было
     }
     // if (b.Switch(kk::t4Discr_enabled, " Реле 4"))
@@ -122,8 +124,9 @@ void build(sets::Builder &b)
     {
 
       b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
-      b.Time(kk::t4Discr_startTime, "ON");
-      b.Time(kk::t4Discr_endTime, "OFF");
+      b.Time(kk::t4Discr_startTime, "Вкл в ..");
+      b.Time(kk::t4Discr_endTime, ".. откл");
+      b.Label(" ", " ");
       //    b.Time("", &data.secondsStart);// так было
     }
     // if (b.Switch(kk::t5Discr_enabled, " Реле 5"))
@@ -133,10 +136,10 @@ void build(sets::Builder &b)
     {
 
       b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
-      b.Time(kk::t5Discr_startTime, "ON");
-      b.Time(kk::t5Discr_endTime, "OFF");
-      //    b.Time("", &data.secondsStart);// так было
-    }
+      b.Time(kk::t5Discr_startTime, "Вкл в ..");
+      b.Time(kk::t5Discr_endTime, ".. откл");
+      b.Label(" ", " ");
+   }
   } // ОСВЕЩЕНИЕ
 
   {
@@ -155,6 +158,7 @@ void build(sets::Builder &b)
       b.Slider(kk::t1f4_dim, "яркость вечером");
       b.Time(kk::t1f5_startTime, "Закат начинается");
       b.Time(kk::t1_stopTime, "полная тьма к");
+      b.Label(" ", " ");
     } // if enabled
   } // природное освещение
   /* аквариумистика */
