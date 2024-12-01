@@ -1,4 +1,4 @@
-#include <Arduino.h>
+
 
 // прошивка тут
 // C:\Users\Acer\Documents\PlatformIO\Projects\minihub\.pio\build\esp32doit-devkit-v1
@@ -17,6 +17,8 @@
 #include <SettingsGyver.h>
 #include <WiFiConnector.h>
 #include <GyverNTP.h>
+// #include "driver/temp_sensor.h"
+
 #include "data.h" // тут лежит структура data по кошерному
 #include "settings.h"
 #include "userTimers.h"
@@ -74,6 +76,10 @@ void setup()
   db.init(kk::t5Discr_enabled, 0);
   db.init(kk::t5Discr_startTime, 21600ul);
   db.init(kk::t5Discr_endTime, 72000ul);
+  db.init(kk::t6Discr_name, "Реле 6");
+  db.init(kk::t6Discr_enabled, 0);
+  db.init(kk::t6Discr_startTime, 21600ul);
+  db.init(kk::t6Discr_endTime, 72000ul);
 
   db.init(kk::t1f_enabled, 0);
   db.init(kk::t1f1_startTime, 19800ul);
@@ -88,17 +94,6 @@ void setup()
 
   db.init(kk::btnName, "имечко кнопоньки");
   db.init(kk::btnColor, 0xff00aa);
-  //  db.init(kk::txt, "text");   // инициализация базы данных
-  //  db.init(kk::slider, -3.5);
-  //  db.init(kk::pass, "some pass");
-  //  db.init(kk::uintw, 64u);
-  //  db.init(kk::intw, -10);
-  //  db.init(kk::int64w, 1234567ll);
-  //  db.init(kk::color, 0xff0000);
-  //  db.init(kk::toggle, (bool)1);
-  //  db.init(kk::selectw, (uint8_t)1);
-  //  db.init(kk::date, 1719941932);
-  //  db.init(kk::datime, 1719941932);
   db.dump(Serial);
 
   // ======== WIFI ========
@@ -123,7 +118,7 @@ void setup()
   NTP.begin(5);       // часовой пояс. Для Москвы: 3. Худжанд, Нск 5. Обновляться раз в 600 сек
   NTP.setPeriod(600); // обновлять раз в 600 сек
   NTP.tick();
-  init_relays();
+  init_pins();
 
 } // setup
 
@@ -141,11 +136,6 @@ void loop()
 
     if (!NTP.status() && NTP.synced())
     {
-      // берем текущую дату и время
-      // db[kk::t1f1_startTime] =  //тут хранится время
-      //    nowTime.set(ntp.hour(), ntp.minute(), ntp.second());
-      //    nowDate.set(ntp.year(), ntp.month(), ntp.day());
-
       data.secondsNow = NTP.daySeconds();
     }
     else

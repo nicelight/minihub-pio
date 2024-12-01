@@ -4,14 +4,24 @@
 #define WIFIPASS ""
 #define INDIKATOR 2 // на каком пине индикаторный светодиод
 
-#define RELE_1 13
-#define RELE_2 14
-#define RELE_3 27
-#define RELE_4 26
-#define RELE_5 28
+#define RELE_1 4
+#define RELE_2 16
+#define RELE_3 17
+#define RELE_4 5
+#define RELE_5 18
+#define RELE_6 19
+
+//для rgb ленты
+#define RED_RGB_LENTA 27
+#define GREEN_RGB_LENTA 26
+#define BLUE_RGB_LENTA 25
+#define GND_RGB_LENTA 33
+
+
 #define ON 0  // включение релюшек логическим нулем или единицей
 #define OFF 1 //
 
+#define PRIRODNIYSVET_BELIY
 
 
 

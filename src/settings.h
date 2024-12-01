@@ -4,7 +4,7 @@
 #include <GyverDBFile.h>
 #include <SettingsGyver.h>
 
-DB_KEYS( // ключи по которым идет привязка к базе и к виджетам в web
+DB_KEYS(  // ключи по которым идет привязка к базе и к виджетам в web
     kk,
     wifi_ssid,
     wifi_pass,
@@ -36,7 +36,12 @@ DB_KEYS( // ключи по которым идет привязка к базе
     t5Discr_enabled,
     t5Discr_startTime,
     t5Discr_endTime,
-    
+    t6Discr_name,
+    t6Discr_led,
+    t6Discr_enabled,
+    t6Discr_startTime,
+    t6Discr_endTime,
+
     t1f_enabled,
     t1f1_startTime,
     t1f2_startTime,
@@ -73,9 +78,9 @@ DB_KEYS( // ключи по которым идет привязка к базе
 
 );
 
-static bool notice_f; // флаг на отправку уведомления о подключении к wifi
-static bool rel1_on = 0; // флаг о том что реле включено
-extern GyverDBFile db; // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+static bool notice_f;     // флаг на отправку уведомления о подключении к wifi
+static bool rel1_on = 0;  // флаг о том что реле включено
+extern GyverDBFile db;    // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 extern SettingsGyver sett;
 
 // чтобы функции были видимыми, делаем их в *.cpp  не static

@@ -31,6 +31,7 @@ void update(sets::Updater &upd)
   upd.update("t3Discr_led"_h, data.rel3_on);
   upd.update("t4Discr_led"_h, data.rel4_on);
   upd.update("t5Discr_led"_h, data.rel5_on);
+  upd.update("t6Discr_led"_h, data.rel6_on);
   if (notice_f) // уведомление при вводе wifi данных
   {
     notice_f = false;
@@ -84,11 +85,11 @@ void build(sets::Builder &b)
   {
     sets::Group g(b, "Суточные таймеры");
     // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
-    if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name])) // Реле 1
+    // if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name])) // Реле 1
+    if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) // Реле 1
       b.reload();
     if (db[kk::t1Discr_enabled].toBool())
     {
-      // b.LED("t1Discr_led"_h, "сстатус", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
       b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
       // b.Time(kk::t1Discr_startTime, "Включается в ..", 0xf7e5b2);
       b.Time(kk::t1Discr_startTime, "Включается в ..");
@@ -96,7 +97,8 @@ void build(sets::Builder &b)
       b.Label(" ", " ");
     }
     // if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
-    if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name])) // Реле 2
+    // if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name])) // Реле 2
+    if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green)) // Реле 2
       b.reload();
     if (db[kk::t2Discr_enabled].toBool())
     {
@@ -106,7 +108,8 @@ void build(sets::Builder &b)
       b.Label(" ", " ");
     }
     // if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
-    if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name])) // Реле 3
+    // if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name])) // Реле 3
+    if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint)) // Реле 3
       b.reload();
     if (db[kk::t3Discr_enabled].toBool())
     {
@@ -118,7 +121,8 @@ void build(sets::Builder &b)
       //    b.Time("", &data.secondsStart);// так было
     }
     // if (b.Switch(kk::t4Discr_enabled, " Реле 4"))
-    if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name])) // Реле 4
+    // if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name])) // Реле 4
+    if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua)) // Реле 4
       b.reload();
     if (db[kk::t4Discr_enabled].toBool())
     {
@@ -130,7 +134,8 @@ void build(sets::Builder &b)
       //    b.Time("", &data.secondsStart);// так было
     }
     // if (b.Switch(kk::t5Discr_enabled, " Реле 5"))
-    if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name])) // Реле 5
+    // if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name])) // Реле 5
+    if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue)) // Реле 5
       b.reload();
     if (db[kk::t5Discr_enabled].toBool())
     {
@@ -140,12 +145,24 @@ void build(sets::Builder &b)
       b.Time(kk::t5Discr_endTime, ".. откл");
       b.Label(" ", " ");
    }
-  } // ОСВЕЩЕНИЕ
+      // if (b.Switch(kk::t6Discr_enabled, " Реле 6"))
+    // if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name])) // Реле 6
+    if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet)) // Реле 6
+      b.reload();
+    if (db[kk::t6Discr_enabled].toBool())
+    {
+
+      b.LED("t6Discr_led"_h, "Cтатус >>", data.rel6_on, sets::Colors::Black, sets::Colors::Violet);
+      b.Time(kk::t6Discr_startTime, "Вкл в ..");
+      b.Time(kk::t6Discr_endTime, ".. откл");
+      b.Label(" ", " ");
+   }
+  } // Суточные таймеры
 
   {
     /* аквариумистика */
     sets::Group g(b, "Природное освещение");
-    if (b.Switch(kk::t1f_enabled, "Включить"))
+    if (b.Switch(kk::t1f_enabled, "Включить", nullptr, sets::Colors::Orange))
       b.reload();
     if (db[kk::t1f_enabled].toBool())
     {
@@ -167,7 +184,7 @@ void build(sets::Builder &b)
     // sets::Group g(b, "Подстройки");
     sets::Group g(b, " ");
     {
-      sets::Menu g(b, "Подстройки");
+      sets::Menu g(b, "Опции");
 
       {
         sets::Menu g(b, "Интерфейс");
@@ -178,10 +195,11 @@ void build(sets::Builder &b)
         */
 
         b.Input(kk::t1Discr_name, "Имя Реле1:");
-        b.Input(kk::t2Discr_name, "Имя Реле1:");
-        b.Input(kk::t3Discr_name, "Имя Реле1:");
-        b.Input(kk::t4Discr_name, "Имя Реле1:");
-        b.Input(kk::t5Discr_name, "Имя Реле1:");
+        b.Input(kk::t2Discr_name, "Имя Реле2:");
+        b.Input(kk::t3Discr_name, "Имя Реле3:");
+        b.Input(kk::t4Discr_name, "Имя Реле4:");
+        b.Input(kk::t5Discr_name, "Имя Реле5:");
+        b.Input(kk::t6Discr_name, "Имя Реле6:");
       }
       {
         sets::Menu g(b, "Расширенные");

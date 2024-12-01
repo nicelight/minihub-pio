@@ -30,6 +30,7 @@ struct Data // обьявляем класс структуры
   bool rel3_on = 0;
   bool rel4_on = 0;
   bool rel5_on = 0;
+  bool rel6_on = 0;
   
   int number = 123456;
   String label = "label";
@@ -47,6 +48,31 @@ struct Data // обьявляем класс структуры
 };
 
 extern Data data; // объявляем что у нас будет переменная data класса Data
+
+/*
+byte red, green, blue;
+unsigned long rgb = 0x6f56a3;
+
+red = rgb >> 16 
+green = (rgb & 0x00ff00) >> 8;
+blue = (rgb & 0x0000ff);
+
+или 
+
+
+
+String hexstring = "B787B7";
+    // long number = (long) strtol( &hexstring[1], NULL, 16);
+    long number = (long) strtol( &hexstring[0], NULL, 16);
+    int r = number >> 16;
+    int g = number >> 8 & 0xFF;
+    int b = number & 0xFF;
+*/
+
+
+// constexpr size_t BRIGHT_SIZE = 100;// размер массива 
+// extern uint16_t brightn[BRIGHT_SIZE];
+extern uint16_t brightn[100];
 
 // bool    t1Discr_enabled,
 // uint32_t    t1Discr_startTime,
