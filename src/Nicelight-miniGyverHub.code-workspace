@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "minihub",
+			"path": ".."
+		},
+		{
+			"name": "Teplica-GyverSettings",
+			"path": "../../Teplica-GyverSettings"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"ios": "cpp",
+			"*.tcc": "cpp",
+			"xutility": "cpp"
+		}
+	}
+}

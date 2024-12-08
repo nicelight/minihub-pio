@@ -1,3 +1,5 @@
+#define DEBUG
+
 // имя пароль вашей домашней сети
 // можно ввести, подключившись к ESP AP c паролем 1234567890
 #define WIFI ""
@@ -11,15 +13,25 @@
 #define RELE_5 18
 #define RELE_6 19
 
+#define ON 0  // включение релюшек логическим нулем или единицей
+#define OFF 1 //
+
+
 //для rgb ленты
 #define RED_RGB_LENTA 27
 #define GREEN_RGB_LENTA 26
 #define BLUE_RGB_LENTA 25
-#define GND_RGB_LENTA 33
+#define GND_RGB_LENTA 33 // удалить. дает минус на управление RGB транзисторами ленты 
+#define RED_PWM_CHANNEL 0 
+#define GREEN_PWM_CHANNEL 1 
+#define BLUE_PWM_CHANNEL 2
 
 
-#define ON 0  // включение релюшек логическим нулем или единицей
-#define OFF 1 //
+
+#define PIN_DS18B20_1 4
+#define PIN_DS18B20_2 16
+
+
 
 #define PRIRODNIYSVET_BELIY
 

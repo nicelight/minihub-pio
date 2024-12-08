@@ -1,4 +1,4 @@
-.pio/build/esp32dev/src/settings.cpp.o: src/settings.cpp src/data.h \
+.pio/build/esp32dev/src/settings.cpp.o: src/settings.cpp src/settings.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/freertos/FreeRTOS.h \
@@ -131,7 +131,7 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- src/settings.h .pio/libdeps/esp32dev/GyverDB/src/GyverDBFile.h \
+ .pio/libdeps/esp32dev/GyverDB/src/GyverDBFile.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/FS/src/FS.h \
  .pio/libdeps/esp32dev/GyverDB/src/GyverDB.h \
  .pio/libdeps/esp32dev/GTL/src/GTL.h \
@@ -310,7 +310,7 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
- .pio/libdeps/esp32dev/Settings/src/web/settings.h src/nastroyki.h \
+ .pio/libdeps/esp32dev/Settings/src/web/settings.h \
  .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
  .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
  .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
@@ -319,4 +319,5 @@
  .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
  .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
  .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
- .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h
+ .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h src/data.h \
+ src/nastroyki.h

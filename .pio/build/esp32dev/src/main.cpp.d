@@ -320,5 +320,25 @@
  .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
  .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
  .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
- .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h src/data.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18Single.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/utils/GyverOneWire.h \
+ .pio/libdeps/esp32dev/GyverIO/src/GyverIO.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio_esp32.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/rtc_io.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/include/soc/rtc_io_periph.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_channel.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_reg.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_reg.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/sens_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/rtc_io_types.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio_defs.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/PinIO.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/PinT.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/shift.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/utils/utils.h src/data.h \
  src/settings.h src/userTimers.h src/nastroyki.h
