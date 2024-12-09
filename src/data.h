@@ -25,6 +25,7 @@ struct Data  // обьявляем класс структуры
 {
     uint32_t secondsNow = 12;
     uint32_t secondsUptime = 1;
+    // bool updateInterface = 0; // принудительно перерисовывем интерфейс.
     bool rel1_on = 0;
     bool rel2_on = 0;
     bool rel3_on = 0;
@@ -33,6 +34,7 @@ struct Data  // обьявляем класс структуры
     bool rel6_on = 0;
     int16_t temp_ds1 = 18; // датчик температуры
     // природное освещение
+    bool t1isWorks = 0;
     uint32_t t1Sunrise_step = 1;      // шаг рассвета
     uint32_t t1f1_time = 21600;  // рассвет в 6 по дефолту
     uint32_t t1f2_time = 25200;  // утро начинается в 7 

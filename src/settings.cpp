@@ -7,15 +7,15 @@
 
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
+#include "userTimers.h"
 
 // GyverDBFile db(&LittleFS, "/data.db");
 // static SettingsESP sett(PROJECT_NAME " v" PROJECT_VER, &db);
 
 GyverDBFile db(&LittleFS, "/nicelight.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Горошек для любимой", &db);  // указывается заголовок меню, подключается база данных
-bool timer_nature_applied = 1; // флаг на применение настроек природного освещения, кнопкой из веб морды отрабатывает
-static bool notice_f;     // флаг на отправку уведомления о подключении к wifi
-
+bool timer_nature_applied = 1;                   // флаг на применение настроек природного освещения, кнопкой из веб морды отрабатывает
+static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
 
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 void update(sets::Updater &upd) {
@@ -24,7 +24,6 @@ void update(sets::Updater &upd) {
     upd.update(kk::secondsUptime, data.secondsUptime);
     upd.update("lbl1"_h, random(100));
     upd.update("lbl2"_h, millis());
-    // upd.update(kk::t1Discr_led, data.rel1_on);
     upd.update("t1Discr_led"_h, data.rel1_on);
     upd.update("t2Discr_led"_h, data.rel2_on);
     upd.update("t3Discr_led"_h, data.rel3_on);
@@ -68,10 +67,83 @@ void build(sets::Builder &b) {
       }
     */
 
-    // 0x3995db //цвет интерфейса зоны отдыха голубенький
-    // 0xdb7d39 //цвет интерфейса игры оранжевый
-    // 0xaa39db // дискотека фиолетовый
+    // костыль на моментальное обновление индикаторных светодиодов
+    switch (b.build.id) {
+        case kk::t1Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t1Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t2Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t2Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t3Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t3Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t4Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t4Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t5Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t5Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t6Discr_startTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t6Discr_endTime:
+            userSixTimers();
+            b.reload();
+            break;
+        case kk::t1f1_startTime:
+            userNatureTimer();
+            b.reload();
+            break;
+        case kk::t1f2_startTime:
+            userNatureTimer();
+            b.reload();
+            break;
+        case kk::t1f3_startTime:
+            userNatureTimer();
+            b.reload();
+            break;
+        case kk::t1f4_startTime:
+            userNatureTimer();
+            b.reload();
+            break;
+        case kk::t1f5_startTime:
+            userNatureTimer();
+            b.reload();
+            break;
+        case kk::t1_stopTime:
+            userNatureTimer();
+            b.reload();
+            break;
+    }  //  switch (b.build.id)
 
+    // WEB интерфейс ВЕБ морда формируется здесь
     {
         sets::Group g(b, "Nicelight");
         //        b.Time(kk::secondsNow, "Вермечко", sets::Colors::Red);
@@ -79,13 +151,13 @@ void build(sets::Builder &b) {
         b.Time(kk::secondsNow, "Вермечко");
         b.Time(kk::secondsUptime, "Аптайм");
     }
-
     {
         sets::Group g(b, "Суточные таймеры");
         // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
-        // if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name])) // Реле 1
-        if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow))  // Реле 1
+        if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) {  // Реле 1
+            userSixTimers();
             b.reload();
+        }
         if (db[kk::t1Discr_enabled].toBool()) {
             b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
             // b.Time(kk::t1Discr_startTime, "Включается в ..", 0xf7e5b2);
@@ -96,7 +168,10 @@ void build(sets::Builder &b) {
         // if (b.Switch(kk::t2Discr_enabled, " Реле света 2"))
         // if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name])) // Реле 2
         if (b.Switch(kk::t2Discr_enabled, db[kk::t2Discr_name], nullptr, sets::Colors::Green))  // Реле 2
+        {
             b.reload();
+            userSixTimers();
+        }
         if (db[kk::t2Discr_enabled].toBool()) {
             b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
             b.Time(kk::t2Discr_startTime, "Вкл в ..");
@@ -106,7 +181,10 @@ void build(sets::Builder &b) {
         // if (b.Switch(kk::t3Discr_enabled, " Реле 3"))
         // if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name])) // Реле 3
         if (b.Switch(kk::t3Discr_enabled, db[kk::t3Discr_name], nullptr, sets::Colors::Mint))  // Реле 3
+        {
             b.reload();
+            userSixTimers();
+        }
         if (db[kk::t3Discr_enabled].toBool()) {
             b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
             b.Time(kk::t3Discr_startTime, "Вкл в ..");
@@ -117,7 +195,10 @@ void build(sets::Builder &b) {
         // if (b.Switch(kk::t4Discr_enabled, " Реле 4"))
         // if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name])) // Реле 4
         if (b.Switch(kk::t4Discr_enabled, db[kk::t4Discr_name], nullptr, sets::Colors::Aqua))  // Реле 4
+        {
             b.reload();
+            userSixTimers();
+        }
         if (db[kk::t4Discr_enabled].toBool()) {
             b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
             b.Time(kk::t4Discr_startTime, "Вкл в ..");
@@ -128,7 +209,10 @@ void build(sets::Builder &b) {
         // if (b.Switch(kk::t5Discr_enabled, " Реле 5"))
         // if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name])) // Реле 5
         if (b.Switch(kk::t5Discr_enabled, db[kk::t5Discr_name], nullptr, sets::Colors::Blue))  // Реле 5
+        {
             b.reload();
+            userSixTimers();
+        }
         if (db[kk::t5Discr_enabled].toBool()) {
             b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
             b.Time(kk::t5Discr_startTime, "Вкл в ..");
@@ -138,7 +222,10 @@ void build(sets::Builder &b) {
         // if (b.Switch(kk::t6Discr_enabled, " Реле 6"))
         // if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name])) // Реле 6
         if (b.Switch(kk::t6Discr_enabled, db[kk::t6Discr_name], nullptr, sets::Colors::Violet))  // Реле 6
+        {
             b.reload();
+            userSixTimers();
+        }
         if (db[kk::t6Discr_enabled].toBool()) {
             b.LED("t6Discr_led"_h, "Cтатус >>", data.rel6_on, sets::Colors::Black, sets::Colors::Violet);
             b.Time(kk::t6Discr_startTime, "Вкл в ..");
@@ -146,13 +233,22 @@ void build(sets::Builder &b) {
             b.Label(" ", " ");
             b.Label(" ", " ");
         }
+        // // костыль чтобы индикаторные светодиодики загорались сразу
+        // if (data.updateInterface) {
+        //     data.updateInterface = 0;
+        //     b.reload();
+        // }
+
     }  // Суточные таймеры
 
     {
         /* аквариумистика */
         sets::Group g(b, "Природное освещение");
-        if (b.Switch(kk::t1f_enabled, "Включить", nullptr, sets::Colors::Orange))
+        if (b.Switch(kk::t1f_enabled, "Включить", nullptr, sets::Colors::Orange)) {
+            userNatureTimer();
             b.reload();
+        }
+        b.LED("Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
         if (db[kk::t1f_enabled].toBool()) {
             b.Time(kk::t1f1_startTime, "Рассвет начинается с");
             b.Time(kk::t1f2_startTime, "Утро с");
@@ -163,10 +259,9 @@ void build(sets::Builder &b) {
             b.Slider(kk::t1f4_dim, "яркость вечером");
             b.Time(kk::t1f5_startTime, "Закат начинается");
             b.Time(kk::t1_stopTime, "полная тьма к");
-            if (b.Button(kk::t1_btn_accept, "Утвердить", sets::Colors::Orange)) 
-            {
-            //  Serial.println("\n\n\tApplied\n\n");
-              timer_nature_applied = 1;
+            if (b.Button(kk::t1_btn_accept, "Утвердить", sets::Colors::Orange)) {
+                //  Serial.println("\n\n\tApplied\n\n");
+                timer_nature_applied = 1;
             }
             b.Label(" ", " ");
             b.Label(" ", " ");
