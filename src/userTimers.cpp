@@ -128,6 +128,8 @@ void userNatureTimer() {  //     // Природное освещение
 
     // если включили работу таймера
     if (db[kk::t1f_enabled].toBool()) {
+            // Serial.println("NATURE ENABLED ");
+
         // проверим в какой фазе мы сейчас
         // если не в ожидании и время за пределами работы света
         if (t1fase && ((data.secondsNow >= data.t1f6_time) || (data.secondsNow < data.t1f1_time))) {
@@ -156,6 +158,7 @@ void userNatureTimer() {  //     // Природное освещение
         // закат
         else if (((data.secondsNow >= data.t1f5_time) && (data.secondsNow < data.t1f6_time))) {
             t1fase = 50;
+            // Serial.println("Z A K A T ");
             data.t1isWorks = 1;
         }
 #ifdef DEBUG
@@ -296,6 +299,7 @@ void userNatureTimer() {  //     // Природное освещение
                 break;
 
             case 70:  // тушим свет, и на исходную
+                data.t1isWorks = 0;
                 ledcWrite(RED_PWM_CHANNEL, 0);
                 ledcWrite(GREEN_PWM_CHANNEL, 0);
                 ledcWrite(BLUE_PWM_CHANNEL, 0);
@@ -304,6 +308,7 @@ void userNatureTimer() {  //     // Природное освещение
         }  // switch(t1fase)
     }  // timer enabled
     else if (data.t1isWorks) {
+        // Serial.println("\n\n\t\t\t usrTmr:309 data.t1isWorks > 0\n\n");
         data.t1isWorks = 0;
         ledcWrite(RED_PWM_CHANNEL, 0);
         ledcWrite(GREEN_PWM_CHANNEL, 0);
@@ -325,14 +330,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_1, ON);
                     data.rel1_on = 1;
-                     
                 }
             } else {
                 if (data.rel1_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_1, OFF);
                     data.rel1_on = 0;
-                     
                 }
             }
         } else if (db[kk::t1Discr_startTime].toInt() > db[kk::t1Discr_endTime].toInt())  // если есть переход через полночь
@@ -342,14 +345,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_1, OFF);
                     data.rel1_on = 0;
-                     
                 }
             } else {
                 if (!data.rel1_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_1, ON);
                     data.rel1_on = 1;
-                     
                 }
             }
         }
@@ -358,7 +359,6 @@ void userSixTimers() {
         {
             digitalWrite(RELE_1, OFF);
             data.rel1_on = 0;
-             
         }
     }
     // таймер 2 ===
@@ -371,14 +371,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_2, ON);
                     data.rel2_on = 1;
-                     
                 }
             } else {
                 if (data.rel2_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_2, OFF);
                     data.rel2_on = 0;
-                     
                 }
             }
         } else if (db[kk::t2Discr_startTime].toInt() > db[kk::t2Discr_endTime].toInt())  // если есть переход через полночь
@@ -388,14 +386,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_2, OFF);
                     data.rel2_on = 0;
-                     
                 }
             } else {
                 if (!data.rel2_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_2, ON);
                     data.rel2_on = 1;
-                     
                 }
             }
         }
@@ -404,7 +400,6 @@ void userSixTimers() {
         {
             digitalWrite(RELE_2, OFF);
             data.rel2_on = 0;
-             
         }
     }
     // таймер 3 ===
@@ -417,14 +412,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_3, ON);
                     data.rel3_on = 1;
-                     
                 }
             } else {
                 if (data.rel3_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_3, OFF);
                     data.rel3_on = 0;
-                     
                 }
             }
         } else if (db[kk::t3Discr_startTime].toInt() > db[kk::t3Discr_endTime].toInt())  // если есть переход через полночь
@@ -434,14 +427,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_3, OFF);
                     data.rel3_on = 0;
-                     
                 }
             } else {
                 if (!data.rel3_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_3, ON);
                     data.rel3_on = 1;
-                     
                 }
             }
         }
@@ -450,7 +441,6 @@ void userSixTimers() {
         {
             digitalWrite(RELE_3, OFF);
             data.rel3_on = 0;
-             
         }
     }
     // таймер 4 ===
@@ -463,14 +453,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_4, ON);
                     data.rel4_on = 1;
-                     
                 }
             } else {
                 if (data.rel4_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_4, OFF);
                     data.rel4_on = 0;
-                     
                 }
             }
         } else if (db[kk::t4Discr_startTime].toInt() > db[kk::t4Discr_endTime].toInt())  // если есть переход через полночь
@@ -480,14 +468,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_4, OFF);
                     data.rel4_on = 0;
-                     
                 }
             } else {
                 if (!data.rel4_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_4, ON);
                     data.rel4_on = 1;
-                     
                 }
             }
         }
@@ -496,7 +482,6 @@ void userSixTimers() {
         {
             data.rel4_on = 0;
             digitalWrite(RELE_4, OFF);
-             
         }
     }
     // таймер 5===
@@ -509,14 +494,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_5, ON);
                     data.rel5_on = 1;
-                     
                 }
             } else {
                 if (data.rel5_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_5, OFF);
                     data.rel5_on = 0;
-                     
                 }
             }
         } else if (db[kk::t5Discr_startTime].toInt() > db[kk::t5Discr_endTime].toInt())  // если есть переход через полночь
@@ -526,14 +509,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_5, OFF);
                     data.rel5_on = 0;
-                     
                 }
             } else {
                 if (!data.rel5_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_5, ON);
                     data.rel5_on = 1;
-                     
                 }
             }
         }
@@ -542,7 +523,6 @@ void userSixTimers() {
         {
             digitalWrite(RELE_5, OFF);
             data.rel5_on = 0;
-             
         }
     }
     // таймер 6===
@@ -555,14 +535,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_6, ON);
                     data.rel6_on = 1;
-                     
                 }
             } else {
                 if (data.rel6_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_6, OFF);
                     data.rel6_on = 0;
-                     
                 }
             }
         } else if (db[kk::t6Discr_startTime].toInt() > db[kk::t6Discr_endTime].toInt())  // если есть переход через полночь
@@ -572,14 +550,12 @@ void userSixTimers() {
                 {
                     digitalWrite(RELE_6, OFF);
                     data.rel6_on = 0;
-                     
                 }
             } else {
                 if (!data.rel6_on)  // avoid extra digWrite
                 {
                     digitalWrite(RELE_6, ON);
                     data.rel6_on = 1;
-                     
                 }
             }
         }
@@ -588,7 +564,6 @@ void userSixTimers() {
         {
             digitalWrite(RELE_6, OFF);
             data.rel6_on = 0;
-             
         }
     }
     // таймер6 ===

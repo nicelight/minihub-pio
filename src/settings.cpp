@@ -30,6 +30,7 @@ void update(sets::Updater &upd) {
     upd.update("t4Discr_led"_h, data.rel4_on);
     upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
+    upd.update("t1f_led"_h, data.t1isWorks);
     if (notice_f)  // уведомление при вводе wifi данных
     {
         notice_f = false;
@@ -248,8 +249,8 @@ void build(sets::Builder &b) {
             userNatureTimer();
             b.reload();
         }
-        b.LED("Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
         if (db[kk::t1f_enabled].toBool()) {
+            b.LED("Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
             b.Time(kk::t1f1_startTime, "Рассвет начинается с");
             b.Time(kk::t1f2_startTime, "Утро с");
             b.Slider(kk::t1f2_dim, "яркость утром");
@@ -262,6 +263,8 @@ void build(sets::Builder &b) {
             if (b.Button(kk::t1_btn_accept, "Утвердить", sets::Colors::Orange)) {
                 //  Serial.println("\n\n\tApplied\n\n");
                 timer_nature_applied = 1;
+                userNatureTimer();
+                b.reload();
             }
             b.Label(" ", " ");
             b.Label(" ", " ");

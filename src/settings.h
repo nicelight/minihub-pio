@@ -43,6 +43,7 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_endTime,
 
     t1f_enabled,
+    t1f_led,
     t1f1_startTime,
     t1f2_startTime,
     t1f2_dim,
