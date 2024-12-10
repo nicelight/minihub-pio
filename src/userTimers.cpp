@@ -102,223 +102,6 @@ void getds18() {
 //
 //
 
-void userNatureTimer() {  //     // Природное освещение
-    // нажали кнопку "Утвердить" в настройках природного освещения, или первый старт
-    if (timer_nature_applied) {
-        timer_nature_applied = 0;
-        // проверка и корректировка настроек времен
-        if (db[kk::t1f1_startTime].toInt() > 75600ul) db[kk::t1f1_startTime] = 28800ul;  // нельзя ставить поздний рассвет
-        // каждая последующая фаза на 5 сек позже предыдущей
-        if (db[kk::t1f2_startTime].toInt() <= db[kk::t1f1_startTime].toInt()) db[kk::t1f2_startTime] = db[kk::t1f1_startTime].toInt() + 5;
-        if (db[kk::t1f3_startTime].toInt() <= db[kk::t1f2_startTime].toInt()) db[kk::t1f3_startTime] = db[kk::t1f2_startTime].toInt() + 5;
-        if (db[kk::t1f4_startTime].toInt() <= db[kk::t1f3_startTime].toInt()) db[kk::t1f4_startTime] = db[kk::t1f3_startTime].toInt() + 5;
-        if (db[kk::t1f5_startTime].toInt() <= db[kk::t1f4_startTime].toInt()) db[kk::t1f5_startTime] = db[kk::t1f4_startTime].toInt() + 5;
-        if (db[kk::t1_stopTime].toInt() <= db[kk::t1f5_startTime].toInt()) db[kk::t1_stopTime] = db[kk::t1f5_startTime].toInt() + 1;
-        // если яркость
-        if (!db[kk::t1f2_dim].toInt()) db[kk::t1f2_dim] = 1;
-        if (!db[kk::t1f3_dim].toInt()) db[kk::t1f3_dim] = 1;
-        if (!db[kk::t1f4_dim].toInt()) db[kk::t1f4_dim] = 1;
-        read_t1_from_db();  // прочитаем из базы в data.xxx все эти значения для природного освещения
-        isMorning = 0;      // флаг на включене света утреннего
-        isLunch = 0;        // флаг на включене света обед
-        isEvening = 0;      // флаг на включене света вечер
-        curr_sunrise_dim = 0;
-        curr_sunset_dim = data.t1f4_dim;
-    }  // timer_nature_applied
-
-    // если включили работу таймера
-    if (db[kk::t1f_enabled].toBool()) {
-            // Serial.println("NATURE ENABLED ");
-
-        // проверим в какой фазе мы сейчас
-        // если не в ожидании и время за пределами работы света
-        if (t1fase && ((data.secondsNow >= data.t1f6_time) || (data.secondsNow < data.t1f1_time))) {
-            t1fase = 70;  //// автомат --- тушим и идем на ожидание
-        }
-        // рассвет
-        if (((data.secondsNow >= data.t1f1_time) && (data.secondsNow < data.t1f2_time))) {
-            t1fase = 10;
-            data.t1isWorks = 1;
-        }
-        // утро
-        else if (((data.secondsNow >= data.t1f2_time) && (data.secondsNow < data.t1f3_time))) {
-            t1fase = 20;
-            data.t1isWorks = 1;
-        }
-        // обед
-        else if (((data.secondsNow >= data.t1f3_time) && (data.secondsNow < data.t1f4_time))) {
-            t1fase = 30;
-            data.t1isWorks = 1;
-        }
-        // вечер
-        else if (((data.secondsNow >= data.t1f4_time) && (data.secondsNow < data.t1f5_time))) {
-            t1fase = 40;
-            data.t1isWorks = 1;
-        }
-        // закат
-        else if (((data.secondsNow >= data.t1f5_time) && (data.secondsNow < data.t1f6_time))) {
-            t1fase = 50;
-            // Serial.println("Z A K A T ");
-            data.t1isWorks = 1;
-        }
-#ifdef DEBUG
-        static byte prevFase = 100;
-        if (prevFase != t1fase) {
-            prevFase = t1fase;
-            Serial.print("\n\tt1fase: ");
-            Serial.print(t1fase);
-            Serial.print("\t\t");
-        }
-#endif
-        // автомат состояний природного освещения
-        switch (t1fase) {
-            case 0:
-                curr_sunrise_dim = 0;
-                curr_sunset_dim = data.t1f4_dim;
-                t1fase_prevSeconds = data.secondsNow - 1000ul;  // ускорение первого шага
-                break;
-            case 10:  // рассвет
-                // пока яркость не на максимуме
-                if (curr_sunrise_dim < data.t1f2_dim) {
-                    // ждем время инкремента яркости,  увеличиваем яркость на 1 позицию
-                    // #ifdef DEBUG
-                    //                     Serial.print("\nrise_dim: ");
-                    //                     Serial.print(curr_sunrise_dim);
-                    //                     Serial.print("\tsecNow: ");
-                    //                     Serial.print(data.secondsNow);
-                    //                     Serial.print("\tprevsec: ");
-                    //                     Serial.print(t1fase_prevSeconds);
-                    //                     Serial.print("\tstep: ");
-                    //                     Serial.print(data.t1Sunrise_step);
-                    //                     Serial.print("\tdata.secondsNow - t1fase_prevSeconds: ");
-                    //                     Serial.print(data.secondsNow - t1fase_prevSeconds);
-                    // #endif
-                    if ((data.secondsNow - t1fase_prevSeconds) >= data.t1Sunrise_step) {
-                        t1fase_prevSeconds = data.secondsNow;
-                        curr_sunrise_dim++;
-#ifdef DEBUG
-                        Serial.print("\n1rise_dim: ");
-                        Serial.print(curr_sunrise_dim);
-                        Serial.print("\tnext in ");
-                        Serial.print(data.t1Sunrise_step);
-                        Serial.print(" sec..");
-#endif
-                        ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunrise_dim]);
-                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunrise_dim]);
-                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[sunrise_step]);
-                        ledcWrite(BLUE_PWM_CHANNEL, 0);
-
-                    }  // if ms
-                }  // step not max
-                else {
-                    // curr_sunrise_dim = 0;  // НАДО ЛИ ??
-                    isMorning = 0;  // флаг на включене света утреннего
-                }
-                break;
-            case 20:               // утро
-                if (!isMorning) {  // этот флаг надо бы возводить только когда закончится плавное  подниятие яркости синего, а пока что она резко включается
-#ifdef DEBUG
-                    Serial.print("\n1f2dim: ");
-                    Serial.print(data.t1f2_dim);
-                    Serial.print("\tbright: ");
-                    Serial.print(brightn[data.t1f2_dim]);
-#endif
-                    isMorning = 1;
-                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f2_dim]);
-                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f2_dim]);
-                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f2_dim]);
-                    isLunch = 0;
-                }
-                break;
-            case 30:  // обед
-                if (!isLunch) {
-#ifdef DEBUG
-                    Serial.print("\n1f3dim: ");
-                    Serial.print(data.t1f3_dim);
-                    Serial.print("\tbright: ");
-                    Serial.print(brightn[data.t1f3_dim]);
-#endif
-                    isLunch = 1;
-                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f3_dim]);
-                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f3_dim]);
-                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f3_dim]);
-                    isEvening = 0;
-                }
-                break;
-            case 40:  //  вечер
-                if (!isEvening) {
-#ifdef DEBUG
-                    Serial.print("\n1f4dim: ");
-                    Serial.print(data.t1f4_dim);
-                    Serial.print("\tbright: ");
-                    Serial.print(brightn[data.t1f4_dim]);
-#endif
-                    isEvening = 1;
-                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f4_dim]);
-                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f4_dim]);
-                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f4_dim]);
-                    isMorning = 0;
-                    curr_sunset_dim = data.t1f4_dim;
-                }
-                break;
-            case 50:  // закат
-                // пока яркость не на максимуме
-                if (curr_sunset_dim) {
-                    // #ifdef DEBUG
-                    //                 Serial.print("\nset_dim: ");
-                    //                 Serial.print(curr_sunset_dim);
-                    //                 Serial.print("\tsecNow: ");
-                    //                 Serial.print(data.secondsNow);
-                    //                 Serial.print("\tprevsec: ");
-                    //                 Serial.print(t1fase_prevSeconds);
-                    //                 Serial.print("\tstep: ");
-                    //                 Serial.print(data.t1Sunset_step);
-                    //                 Serial.print("\tdata.secondsNow - t1fase_prevSeconds: ");
-                    //                 Serial.print(data.secondsNow - t1fase_prevSeconds);
-                    // #endif
-                    // ждем время декремента яркости,  увеличиваем яркость на 1 позицию
-                    if ((data.secondsNow - t1fase_prevSeconds) >= data.t1Sunset_step) {
-                        t1fase_prevSeconds = data.secondsNow;
-                        curr_sunset_dim--;
-#ifdef DEBUG
-                        Serial.print("\nsunset_dim: ");
-                        Serial.print(curr_sunset_dim);
-                        Serial.print("\tnext step in: ");
-                        Serial.print(data.t1Sunset_step);
-                        Serial.print(" sec..");
-#endif
-                        ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        ledcWrite(BLUE_PWM_CHANNEL, 0);
-
-                    }  // if ms
-                }  // step not max
-                else {
-                }
-                break;
-
-            case 70:  // тушим свет, и на исходную
-                data.t1isWorks = 0;
-                ledcWrite(RED_PWM_CHANNEL, 0);
-                ledcWrite(GREEN_PWM_CHANNEL, 0);
-                ledcWrite(BLUE_PWM_CHANNEL, 0);
-                t1fase = 0;  // GO  на исходную
-                break;
-        }  // switch(t1fase)
-    }  // timer enabled
-    else if (data.t1isWorks) {
-        // Serial.println("\n\n\t\t\t usrTmr:309 data.t1isWorks > 0\n\n");
-        data.t1isWorks = 0;
-        ledcWrite(RED_PWM_CHANNEL, 0);
-        ledcWrite(GREEN_PWM_CHANNEL, 0);
-        ledcWrite(BLUE_PWM_CHANNEL, 0);
-    }
-}  // userNatureTimer()
-//
-//
-//
-
 void userSixTimers() {
     // таймер 1 ===
     // === таймер Реле 1
@@ -572,3 +355,228 @@ void userSixTimers() {
 //
 //
 //
+
+void userNatureTimer() {  //     // Природное освещение
+    // нажали кнопку "Утвердить" в настройках природного освещения, или первый старт
+    if (timer_nature_applied) {
+        timer_nature_applied = 0;
+        data.t1f_enbl = db[kk::t1f_enabled];
+        // проверка и корректировка настроек времен
+        if (db[kk::t1f1_startTime].toInt() > 75600ul) db[kk::t1f1_startTime] = 28800ul;  // нельзя ставить поздний рассвет
+        // каждая последующая фаза на 5 сек позже предыдущей
+        if (db[kk::t1f2_startTime].toInt() <= db[kk::t1f1_startTime].toInt()) db[kk::t1f2_startTime] = db[kk::t1f1_startTime].toInt() + 5;
+        if (db[kk::t1f3_startTime].toInt() <= db[kk::t1f2_startTime].toInt()) db[kk::t1f3_startTime] = db[kk::t1f2_startTime].toInt() + 5;
+        if (db[kk::t1f4_startTime].toInt() <= db[kk::t1f3_startTime].toInt()) db[kk::t1f4_startTime] = db[kk::t1f3_startTime].toInt() + 5;
+        if (db[kk::t1f5_startTime].toInt() <= db[kk::t1f4_startTime].toInt()) db[kk::t1f5_startTime] = db[kk::t1f4_startTime].toInt() + 5;
+        if (db[kk::t1_stopTime].toInt() <= db[kk::t1f5_startTime].toInt()) db[kk::t1_stopTime] = db[kk::t1f5_startTime].toInt() + 1;
+        // если яркость
+        if (!db[kk::t1f2_dim].toInt()) db[kk::t1f2_dim] = 1;
+        if (!db[kk::t1f3_dim].toInt()) db[kk::t1f3_dim] = 1;
+        if (!db[kk::t1f4_dim].toInt()) db[kk::t1f4_dim] = 1;
+        read_t1_from_db();  // прочитаем из базы в data.xxx все эти значения для природного освещения
+        isMorning = 0;      // флаг на включене света утреннего
+        isLunch = 0;        // флаг на включене света обед
+        isEvening = 0;      // флаг на включене света вечер
+        curr_sunrise_dim = 0;
+        curr_sunset_dim = data.t1f4_dim;
+    }  // timer_nature_applied
+
+    // если включили работу таймера
+    // if (data.t1f_enbl) {
+    if (db[kk::t1f_enabled]) { //заглючивает что то , не верно читается
+#ifdef CHECKT1
+    Serial.print("\n\t\tNATURE ENABLED\n");
+#endif        // проверим в какой фазе мы сейчас
+        // если не в ожидании и время за пределами работы света
+        if (t1fase && ((data.secondsNow >= data.t1f6_time) || (data.secondsNow < data.t1f1_time))) {
+            t1fase = 70;  //// автомат --- тушим и идем на ожидание
+        }
+        // рассвет
+        if (((data.secondsNow >= data.t1f1_time) && (data.secondsNow < data.t1f2_time))) {
+            t1fase = 10;
+            data.t1isWorks = 1;
+        }
+        // утро
+        else if (((data.secondsNow >= data.t1f2_time) && (data.secondsNow < data.t1f3_time))) {
+            t1fase = 20;
+            data.t1isWorks = 1;
+        }
+        // обед
+        else if (((data.secondsNow >= data.t1f3_time) && (data.secondsNow < data.t1f4_time))) {
+            t1fase = 30;
+            data.t1isWorks = 1;
+        }
+        // вечер
+        else if (((data.secondsNow >= data.t1f4_time) && (data.secondsNow < data.t1f5_time))) {
+            t1fase = 40;
+            data.t1isWorks = 1;
+        }
+        // закат
+        else if (((data.secondsNow >= data.t1f5_time) && (data.secondsNow < data.t1f6_time))) {
+            t1fase = 50;
+            // Serial.println("Z A K A T ");
+            data.t1isWorks = 1;
+        }
+#ifdef DEBUG
+        static byte prevFase = 100;
+        if (prevFase != t1fase) {
+            prevFase = t1fase;
+            Serial.print("\n\tt1fase: ");
+            Serial.print(t1fase);
+            Serial.print("\t\t");
+        }
+#endif
+        // автомат состояний природного освещения
+        switch (t1fase) {
+            case 0:
+                curr_sunrise_dim = 0;
+                curr_sunset_dim = data.t1f4_dim;
+                t1fase_prevSeconds = data.secondsNow - 1000ul;  // ускорение первого шага
+                break;
+            case 10:  // рассвет
+                // пока яркость не на максимуме
+                if (curr_sunrise_dim < data.t1f2_dim) {
+                    // ждем время инкремента яркости,  увеличиваем яркость на 1 позицию
+                    // #ifdef DEBUG
+                    //                     Serial.print("\nrise_dim: ");
+                    //                     Serial.print(curr_sunrise_dim);
+                    //                     Serial.print("\tsecNow: ");
+                    //                     Serial.print(data.secondsNow);
+                    //                     Serial.print("\tprevsec: ");
+                    //                     Serial.print(t1fase_prevSeconds);
+                    //                     Serial.print("\tstep: ");
+                    //                     Serial.print(data.t1Sunrise_step);
+                    //                     Serial.print("\tdata.secondsNow - t1fase_prevSeconds: ");
+                    //                     Serial.print(data.secondsNow - t1fase_prevSeconds);
+                    // #endif
+                    if ((data.secondsNow - t1fase_prevSeconds) >= data.t1Sunrise_step) {
+                        t1fase_prevSeconds = data.secondsNow;
+                        curr_sunrise_dim++;
+#ifdef DEBUG
+                        Serial.print("\n1rise_dim: ");
+                        Serial.print(curr_sunrise_dim);
+                        Serial.print("\tnext in ");
+                        Serial.print(data.t1Sunrise_step);
+                        Serial.print(" sec..");
+#endif
+                        ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunrise_dim]);
+                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunrise_dim]);
+                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[sunrise_step]);
+                        ledcWrite(BLUE_PWM_CHANNEL, 0);
+
+                    }  // if ms
+                }  // step not max
+                else {
+                    // curr_sunrise_dim = 0;  // НАДО ЛИ ??
+                    isMorning = 0;  // флаг на включене света утреннего
+                }
+                break;
+            case 20:               // утро
+                if (!isMorning) {  // этот флаг надо бы возводить только когда закончится плавное  подниятие яркости синего, а пока что она резко включается
+#ifdef DEBUG
+                    Serial.print("\n1f2dim: ");
+                    Serial.print(data.t1f2_dim);
+                    Serial.print("\tbright: ");
+                    Serial.print(brightn[data.t1f2_dim]);
+#endif
+                    isMorning = 1;
+                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f2_dim]);
+                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f2_dim]);
+                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f2_dim]);
+                    isLunch = 0;
+                }
+                break;
+            case 30:  // обед
+                if (!isLunch) {
+#ifdef DEBUG
+                    Serial.print("\n1f3dim: ");
+                    Serial.print(data.t1f3_dim);
+                    Serial.print("\tbright: ");
+                    Serial.print(brightn[data.t1f3_dim]);
+#endif
+                    isLunch = 1;
+                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f3_dim]);
+                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f3_dim]);
+                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f3_dim]);
+                    isEvening = 0;
+                }
+                break;
+            case 40:  //  вечер
+                if (!isEvening) {
+#ifdef DEBUG
+                    Serial.print("\n1f4dim: ");
+                    Serial.print(data.t1f4_dim);
+                    Serial.print("\tbright: ");
+                    Serial.print(brightn[data.t1f4_dim]);
+#endif
+                    isEvening = 1;
+                    ledcWrite(RED_PWM_CHANNEL, brightn[data.t1f4_dim]);
+                    ledcWrite(GREEN_PWM_CHANNEL, brightn[data.t1f4_dim]);
+                    ledcWrite(BLUE_PWM_CHANNEL, brightn[data.t1f4_dim]);
+                    isMorning = 0;
+                    curr_sunset_dim = data.t1f4_dim;
+                }
+                break;
+            case 50:  // закат
+                // пока яркость не на максимуме
+                if (curr_sunset_dim) {
+                    // #ifdef DEBUG
+                    //                 Serial.print("\nset_dim: ");
+                    //                 Serial.print(curr_sunset_dim);
+                    //                 Serial.print("\tsecNow: ");
+                    //                 Serial.print(data.secondsNow);
+                    //                 Serial.print("\tprevsec: ");
+                    //                 Serial.print(t1fase_prevSeconds);
+                    //                 Serial.print("\tstep: ");
+                    //                 Serial.print(data.t1Sunset_step);
+                    //                 Serial.print("\tdata.secondsNow - t1fase_prevSeconds: ");
+                    //                 Serial.print(data.secondsNow - t1fase_prevSeconds);
+                    // #endif
+                    // ждем время декремента яркости,  увеличиваем яркость на 1 позицию
+                    if ((data.secondsNow - t1fase_prevSeconds) >= data.t1Sunset_step) {
+                        t1fase_prevSeconds = data.secondsNow;
+                        curr_sunset_dim--;
+#ifdef DEBUG
+                        Serial.print("\nsunset_dim: ");
+                        Serial.print(curr_sunset_dim);
+                        Serial.print("\tnext step in: ");
+                        Serial.print(data.t1Sunset_step);
+                        Serial.print(" sec..");
+#endif
+                        ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunset_dim]);
+                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunset_dim]);
+                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[curr_sunset_dim]);
+                        ledcWrite(BLUE_PWM_CHANNEL, 0);
+
+                    }  // if ms
+                }  // step not max
+                else {
+                }
+                break;
+
+            case 70:  // тушим свет, и на исходную
+                data.t1isWorks = 0;
+                ledcWrite(RED_PWM_CHANNEL, 0);
+                ledcWrite(GREEN_PWM_CHANNEL, 0);
+                ledcWrite(BLUE_PWM_CHANNEL, 0);
+                t1fase = 0;  // GO  на исходную
+                break;
+        }  // switch(t1fase)
+    }  // timer enabled
+    else if (data.t1isWorks) {
+        #ifdef CHECKT1
+        // Serial.println("\n\n\t\t\t usrTmr:309 data.t1isWorks > 0\n\n");
+        Serial.println("\n\t Природное освещение отключено\n");
+#endif
+        data.t1isWorks = 0;
+        ledcWrite(RED_PWM_CHANNEL, 0);
+        ledcWrite(GREEN_PWM_CHANNEL, 0);
+        ledcWrite(BLUE_PWM_CHANNEL, 0);
+    }
+}  // userNatureTimer()
+//
+//
+//
+
+// таймер автодозатора от Аквамена
+// https://www.youtube.com/watch?v=XGLbtAAbIi4&feature=youtu.be

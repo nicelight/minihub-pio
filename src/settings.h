@@ -11,6 +11,7 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     apply,
     secondsNow,
     secondsUptime,
+
     t1Discr_name,
     t1Discr_led,
     t1Discr_enabled,
@@ -55,6 +56,26 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t1_stopTime,
     t1_btn_accept,
 
+    aquaDoz1_enabled,
+    aquaDoz1_led,
+    aquaDoz1_1time,
+    aquaDoz1_2time,
+    aquaDoz1_need3rd,
+    aquaDoz1_3time,
+    aquaDoz1_need4th,
+    aquaDoz1_4time,
+    aquaDoz1_need5th,
+    aquaDoz1_5time,
+    aquaDoz1_need6th,
+    aquaDoz1_6time,
+    aquaDoz1_need7th,
+    aquaDoz1_7time,
+    aquaDoz1_need8th,
+    aquaDoz1_8time,
+    aquaDoze1_dozeTime,
+    aquaDoz1_btn_accept,
+    aquaDoz1_makeDoze,
+
     btnflex,
     btnName,
     btnColor,
@@ -76,12 +97,10 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     datime,
 
     btn1,
-    btn2
-);
+    btn2);
 
-
-extern bool timer_nature_applied; // флаг на применение настроек природного освещения
-extern GyverDBFile db;    // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+extern bool timer_nature_applied;  // флаг на применение настроек природного освещения
+extern GyverDBFile db;             // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 extern SettingsGyver sett;
 
 // чтобы функции были видимыми, делаем их в *.cpp  не static

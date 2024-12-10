@@ -31,6 +31,7 @@ void update(sets::Updater &upd) {
     upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
     upd.update("t1f_led"_h, data.t1isWorks);
+    upd.update("aquaDoz1_led"_h, data.aquaDoz1isWorks);
     if (notice_f)  // уведомление при вводе wifi данных
     {
         notice_f = false;
@@ -152,6 +153,7 @@ void build(sets::Builder &b) {
         b.Time(kk::secondsNow, "Вермечко");
         b.Time(kk::secondsUptime, "Аптайм");
     }
+    /* суточные таймеры */
     {
         sets::Group g(b, "Суточные таймеры");
         // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
@@ -240,17 +242,19 @@ void build(sets::Builder &b) {
         //     b.reload();
         // }
 
-    }  // Суточные таймеры
+    } /* суточные таймеры */
 
+    /* аквариумистика */
     {
-        /* аквариумистика */
         sets::Group g(b, "Природное освещение");
-        if (b.Switch(kk::t1f_enabled, "Включить", nullptr, sets::Colors::Orange)) {
+        if (b.Switch(kk::t1f_enabled, "Сделать красиво", nullptr, sets::Colors::Orange)) {
+            Serial.print("\n\t\t\t Switch Природное enabled\n\n");
             userNatureTimer();
             b.reload();
         }
-        if (db[kk::t1f_enabled].toBool()) {
-            b.LED("Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
+        if (db[kk::t1f_enabled]) {
+        // if (db[kk::t1f_enabled].toBool()) {
+            b.LED("t1f_led"_h, "Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
             b.Time(kk::t1f1_startTime, "Рассвет начинается с");
             b.Time(kk::t1f2_startTime, "Утро с");
             b.Slider(kk::t1f2_dim, "яркость утром");
@@ -260,21 +264,95 @@ void build(sets::Builder &b) {
             b.Slider(kk::t1f4_dim, "яркость вечером");
             b.Time(kk::t1f5_startTime, "Закат начинается");
             b.Time(kk::t1_stopTime, "полная тьма к");
-            if (b.Button(kk::t1_btn_accept, "Утвердить", sets::Colors::Orange)) {
+            if (b.Button(kk::t1_btn_accept, "Обновить", sets::Colors::Orange)) {
                 //  Serial.println("\n\n\tApplied\n\n");
                 timer_nature_applied = 1;
                 userNatureTimer();
                 b.reload();
             }
             b.Label(" ", " ");
-            b.Label(" ", " ");
 
         }  // if enabled
     }  // природное освещение
     /* аквариумистика */
 
+    /* аквамен дозатор шприцы */
+    // TODO
+    // допилить userTImers
+    // добавить в базу состояние вклю выкл и временные шняги
     {
-        // sets::Group g(b, "Подстройки");
+        sets::Group g(b, "Мультитаймер");
+        if (b.Switch(kk::aquaDoz1_enabled, "Дозатор удобрений", nullptr, sets::Colors::Aqua)) {
+            // userNatureTimer();
+            b.reload();     
+        }
+        if (db[kk::aquaDoz1_enabled].toBool()) {
+            b.LED("aquaDoz1_led"_h, "Cтатус >>", data.aquaDoz1isWorks, sets::Colors::Black, sets::Colors::Aqua);
+            b.Time(kk::aquaDoz1_1time, "Первый раз в");
+            b.Time(kk::aquaDoz1_2time, "Второй раз в");
+            if (b.Switch(kk::aquaDoz1_need3rd, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need3rd].toBool())
+                b.Time(kk::aquaDoz1_3time, "в");
+
+            if (b.Switch(kk::aquaDoz1_need4th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need4th].toBool())
+                b.Time(kk::aquaDoz1_4time, "в");
+
+            if (b.Switch(kk::aquaDoz1_need5th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need5th].toBool())
+                b.Time(kk::aquaDoz1_5time, "в");
+            if (b.Switch(kk::aquaDoz1_need6th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need6th].toBool())
+                b.Time(kk::aquaDoz1_6time, "в");
+            if (b.Switch(kk::aquaDoz1_need7th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need7th].toBool())
+                b.Time(kk::aquaDoz1_7time, "в");
+            if (b.Switch(kk::aquaDoz1_need8th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                // userNatureTimer();
+                b.reload();
+            }
+            if (db[kk::aquaDoz1_need8th].toBool())
+                b.Time(kk::aquaDoz1_8time, "в");
+
+
+            b.Time(kk::aquaDoze1_dozeTime, "Подача дозы в течении");
+            if (b.Button(kk::aquaDoz1_btn_accept, "Обновить", sets::Colors::Aqua)) {
+                //  Serial.println("\n\n\tApplied\n\n");
+                // timer_nature_applied = 1;
+                // userNatureTimer();
+                b.reload();
+            }
+         
+            b.Label(" ", " ");
+            if (b.Button(kk::aquaDoz1_makeDoze, "Дать дозу", sets::Colors::Gray)) {
+                //  Serial.println("\n\n\tApplied\n\n");
+                // timer_nature_applied = 1;
+                // userNatureTimer();
+                b.reload();
+            }
+         
+            b.Label(" ", " ");
+
+        }  // if enabled
+    } /* аквамен дозатор шприцы */
+
+    /* Настройки , внизу страницы*/
+    {
         sets::Group g(b, " ");
         {
             sets::Menu g(b, "Опции");

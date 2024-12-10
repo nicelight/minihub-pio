@@ -32,20 +32,25 @@ struct Data  // обьявляем класс структуры
     bool rel4_on = 0;
     bool rel5_on = 0;
     bool rel6_on = 0;
-    int16_t temp_ds1 = 18; // датчик температуры
+    int16_t temp_ds1 = 18;  // датчик температуры
     // природное освещение
-    bool t1isWorks = 0;
-    uint32_t t1Sunrise_step = 1;      // шаг рассвета
-    uint32_t t1f1_time = 21600;  // рассвет в 6 по дефолту
-    uint32_t t1f2_time = 25200;  // утро начинается в 7 
-    uint32_t t1f3_time = 43200;  // обед в 12
-    uint32_t t1f4_time = 64800;  // ужин в 18
-    uint32_t t1f5_time = 72000;  // закат в  в 20
-    uint32_t t1f6_time = 75600;  // полная тьма в  в 21
-    uint32_t t1Sunset_step = 1;      // шаг заката
-    uint32_t t1f2_dim = 50; // яркость утром
-    uint32_t t1f3_dim = 80; // яркость обед
-    uint32_t t1f4_dim = 70; // яркость ужин
+    bool t1f_enbl = 0;  // ползунок переключатель в веб интерфесе()
+    bool t1isWorks = 0; // на данный момент Природное светится
+    uint32_t t1Sunrise_step = 1;  // шаг рассвета
+    uint32_t t1f1_time = 21600;   // рассвет в 6 по дефолту
+    uint32_t t1f2_time = 25200;   // утро начинается в 7
+    uint32_t t1f3_time = 43200;   // обед в 12
+    uint32_t t1f4_time = 64800;   // ужин в 18
+    uint32_t t1f5_time = 72000;   // закат в  в 20
+    uint32_t t1f6_time = 75600;   // полная тьма в  в 21
+    uint32_t t1Sunset_step = 1;   // шаг заката
+    uint32_t t1f2_dim = 50;       // яркость утром
+    uint32_t t1f3_dim = 80;       // яркость обед
+    uint32_t t1f4_dim = 70;       // яркость ужин
+
+    // аквамен дозатор
+    bool aquaDoz1isWorks = 0;
+    uint32_t aquaDoz1_time = 0;
 
     //  из примеров Гайвера
     int number = 123456;
@@ -64,6 +69,10 @@ struct Data  // обьявляем класс структуры
 };
 
 extern Data data;  // объявляем что у нас будет переменная data класса Data
+
+// constexpr size_t BRIGHT_SIZE = 100;// размер массива
+// extern uint16_t brightn[BRIGHT_SIZE];
+extern uint16_t brightn[100];
 
 /*
 byte red, green, blue;
@@ -84,10 +93,6 @@ String hexstring = "B787B7";
     int g = number >> 8 & 0xFF;
     int b = number & 0xFF;
 */
-
-// constexpr size_t BRIGHT_SIZE = 100;// размер массива
-// extern uint16_t brightn[BRIGHT_SIZE];
-extern uint16_t brightn[100];
 
 // bool    t1Discr_enabled,
 // uint32_t    t1Discr_startTime,

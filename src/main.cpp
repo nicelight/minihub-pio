@@ -89,7 +89,7 @@ void setup()
   db.init(kk::t6Discr_startTime, 21600ul);
   db.init(kk::t6Discr_endTime, 72000ul);
 
-  db.init(kk::t1f_enabled, 0);
+  db.init(kk::t1f_enabled, (bool)0);
   db.init(kk::t1f1_startTime, 21600ul);
   db.init(kk::t1f2_startTime, 25200ul);
   db.init(kk::t1f2_dim, 70);
@@ -99,6 +99,23 @@ void setup()
   db.init(kk::t1f4_dim, 80);
   db.init(kk::t1f5_startTime, 72000ul);
   db.init(kk::t1_stopTime, 75600ul);
+
+  db.init(kk::aquaDoz1_enabled, 0);
+  db.init(kk::aquaDoz1_1time, 25200ul);
+  db.init(kk::aquaDoz1_2time, 43200ul);
+  db.init(kk::aquaDoz1_need3rd, 0);
+  db.init(kk::aquaDoz1_3time, 64800ul);
+  db.init(kk::aquaDoz1_need4th, 0);
+  db.init(kk::aquaDoz1_4time, 72000ul);
+  db.init(kk::aquaDoz1_need5th, 0);
+  db.init(kk::aquaDoz1_5time, 73000ul);
+  db.init(kk::aquaDoz1_need6th, 0);
+  db.init(kk::aquaDoz1_6time, 74000ul);
+  db.init(kk::aquaDoz1_need7th, 0);
+  db.init(kk::aquaDoz1_7time, 75000ul);
+  db.init(kk::aquaDoz1_need8th, 0);
+  db.init(kk::aquaDoz1_8time, 76000ul);
+  db.init(kk::aquaDoze1_dozeTime, 59);
 
   db.init(kk::btnName, "имечко кнопоньки");
   db.init(kk::btnColor, 0xff00aa);
@@ -163,6 +180,33 @@ void loop()
     data.secondsNow++;    // инкермент реалтайм
     data.secondsUptime++; // инкермент аптайм
   }
+
+// if(db.changed()){
+//   Serial.print("База изменена\t");
+//   Serial.println(millis());
+// }
+
+// static bool prev = 0; 
+// if(prev != db[kk::t1f_enabled].toBool()){
+//   prev = db[kk::t1f_enabled].toBool();
+//   Serial.print("\tdb[kk::t1f_enabled] : ");
+//   Serial.print(db[kk::t1f_enabled].toBool());
+//   Serial.println("");
+// }
+
+static bool prev = 0; 
+if(prev != db[kk::t1f_enabled].toBool()){
+  Serial.print("prev = ");
+  Serial.print(prev);
+  Serial.print("\tdb[kk::t1f_enabled] = ");
+  Serial.print(db[kk::t1f_enabled]);
+  Serial.print("\t.toBool() = ");
+  Serial.print(db[kk::t1f_enabled].toBool());
+  Serial.println("");
+    prev = db[kk::t1f_enabled];
+
+}
+
 
   userSixTimers();
   userNatureTimer();
