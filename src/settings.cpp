@@ -236,24 +236,24 @@ void build(sets::Builder &b) {
             b.Label(" ", " ");
             b.Label(" ", " ");
         }
-        // // костыль чтобы индикаторные светодиодики загорались сразу
-        // if (data.updateInterface) {
-        //     data.updateInterface = 0;
-        //     b.reload();
-        // }
-
     } /* суточные таймеры */
 
     /* аквариумистика */
     {
         sets::Group g(b, "Природное освещение");
         if (b.Switch(kk::t1f_enabled, "Сделать красиво", nullptr, sets::Colors::Orange)) {
-            Serial.print("\n\t\t\t Switch Природное enabled\n\n");
+            Serial.print("\n\t\t\t Switch Природное enabled");
+            data.t1f_enbl = db[kk::t1f_enabled];
             userNatureTimer();
+            // Serial.print("\tdata.t1f_enbl = ");
+            // Serial.print(data.t1f_enbl);
+            // Serial.print("\n\n");
             b.reload();
         }
-        if (db[kk::t1f_enabled]) {
-        // if (db[kk::t1f_enabled].toBool()) {
+        
+        if (data.t1f_enbl) {
+            // if (db[kk::t1f_enabled]) {
+            // if (db[kk::t1f_enabled].toBool()) {
             b.LED("t1f_led"_h, "Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
             b.Time(kk::t1f1_startTime, "Рассвет начинается с");
             b.Time(kk::t1f2_startTime, "Утро с");
@@ -284,7 +284,7 @@ void build(sets::Builder &b) {
         sets::Group g(b, "Мультитаймер");
         if (b.Switch(kk::aquaDoz1_enabled, "Дозатор удобрений", nullptr, sets::Colors::Aqua)) {
             // userNatureTimer();
-            b.reload();     
+            b.reload();
         }
         if (db[kk::aquaDoz1_enabled].toBool()) {
             b.LED("aquaDoz1_led"_h, "Cтатус >>", data.aquaDoz1isWorks, sets::Colors::Black, sets::Colors::Aqua);
@@ -329,7 +329,6 @@ void build(sets::Builder &b) {
             if (db[kk::aquaDoz1_need8th].toBool())
                 b.Time(kk::aquaDoz1_8time, "в");
 
-
             b.Time(kk::aquaDoze1_dozeTime, "Подача дозы в течении");
             if (b.Button(kk::aquaDoz1_btn_accept, "Обновить", sets::Colors::Aqua)) {
                 //  Serial.println("\n\n\tApplied\n\n");
@@ -337,7 +336,7 @@ void build(sets::Builder &b) {
                 // userNatureTimer();
                 b.reload();
             }
-         
+
             b.Label(" ", " ");
             if (b.Button(kk::aquaDoz1_makeDoze, "Дать дозу", sets::Colors::Gray)) {
                 //  Serial.println("\n\n\tApplied\n\n");
@@ -345,7 +344,7 @@ void build(sets::Builder &b) {
                 // userNatureTimer();
                 b.reload();
             }
-         
+
             b.Label(" ", " ");
 
         }  // if enabled

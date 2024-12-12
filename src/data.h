@@ -25,7 +25,8 @@ struct Data  // обьявляем класс структуры
 {
     uint32_t secondsNow = 12;
     uint32_t secondsUptime = 1;
-    // bool updateInterface = 0; // принудительно перерисовывем интерфейс.
+    // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
+    bool t1discr_enbl = 0; 
     bool rel1_on = 0;
     bool rel2_on = 0;
     bool rel3_on = 0;
@@ -72,7 +73,7 @@ extern Data data;  // объявляем что у нас будет перем�
 
 // constexpr size_t BRIGHT_SIZE = 100;// размер массива
 // extern uint16_t brightn[BRIGHT_SIZE];
-extern uint16_t brightn[100];
+extern uint16_t brightn[101];
 
 /*
 byte red, green, blue;

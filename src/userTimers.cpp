@@ -23,16 +23,22 @@ static bool isEvening = 0;               // флаг что вечер наст�
 void init_pins() {
     pinMode(RELE_1, OUTPUT);
     digitalWrite(RELE_1, OFF);
+    delay(100); // чтоб не перегружать блоки питания и контакты
     pinMode(RELE_2, OUTPUT);
     digitalWrite(RELE_2, OFF);
+    delay(100);
     pinMode(RELE_3, OUTPUT);
     digitalWrite(RELE_3, OFF);
+    delay(100);
     pinMode(RELE_4, OUTPUT);
     digitalWrite(RELE_4, OFF);
+    delay(100);
     pinMode(RELE_5, OUTPUT);
     digitalWrite(RELE_5, OFF);
+    delay(100);
     pinMode(RELE_6, OUTPUT);
     digitalWrite(RELE_6, OFF);
+    delay(100);
 
     // настройка ШИМ
     ledcSetup(RED_PWM_CHANNEL, 12000, 12);    // Канал 0
@@ -105,7 +111,8 @@ void getds18() {
 void userSixTimers() {
     // таймер 1 ===
     // === таймер Реле 1
-    if (db[kk::t1Discr_enabled].toBool()) {
+    if (data.t1discr_enbl) {
+    // if (db[kk::t1Discr_enabled].toBool()) {
         if (db[kk::t1Discr_startTime].toInt() < db[kk::t1Discr_endTime].toInt())  // если нет перехода через полночь
         {
             if ((db[kk::t1Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t1Discr_endTime].toInt())) {
@@ -382,8 +389,8 @@ void userNatureTimer() {  //     // Природное освещение
     }  // timer_nature_applied
 
     // если включили работу таймера
-    // if (data.t1f_enbl) {
-    if (db[kk::t1f_enabled]) { //заглючивает что то , не верно читается
+    if (data.t1f_enbl) {
+    // if (db[kk::t1f_enabled]) { //заглючивает что то , не верно читается
 #ifdef CHECKT1
     Serial.print("\n\t\tNATURE ENABLED\n");
 #endif        // проверим в какой фазе мы сейчас
@@ -460,9 +467,9 @@ void userNatureTimer() {  //     // Природное освещение
                         Serial.print(" sec..");
 #endif
                         ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunrise_dim]);
-                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunrise_dim]);
-                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[sunrise_step]);
-                        ledcWrite(BLUE_PWM_CHANNEL, 0);
+                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunrise_dim >> 1]);
+                        ledcWrite(BLUE_PWM_CHANNEL, brightn[curr_sunrise_dim >> 3]);
+                        // ledcWrite(BLUE_PWM_CHANNEL, 0);
 
                     }  // if ms
                 }  // step not max
@@ -544,9 +551,9 @@ void userNatureTimer() {  //     // Природное освещение
                         Serial.print(" sec..");
 #endif
                         ledcWrite(RED_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        // ledcWrite(BLUE_PWM_CHANNEL, brightn[curr_sunset_dim]);
-                        ledcWrite(BLUE_PWM_CHANNEL, 0);
+                        ledcWrite(GREEN_PWM_CHANNEL, brightn[curr_sunset_dim >> 1]);
+                        ledcWrite(BLUE_PWM_CHANNEL, brightn[curr_sunset_dim >> 3]);
+                        // ledcWrite(BLUE_PWM_CHANNEL, 0);
 
                     }  // if ms
                 }  // step not max

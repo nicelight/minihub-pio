@@ -131,7 +131,7 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- src/timer.h src/led.h \
+ src/led.h src/timer.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
@@ -233,6 +233,35 @@
  .pio/libdeps/esp32dev/FOR_MACRO/FOR_MACRO.h \
  .pio/libdeps/esp32dev/GyverDB/src/utils/entry.h \
  .pio/libdeps/esp32dev/GyverDB/src/utils/block.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18Single.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/utils/GyverOneWire.h \
+ .pio/libdeps/esp32dev/GyverIO/src/GyverIO.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio_esp32.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/rtc_io.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/include/soc/rtc_io_periph.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_channel.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_reg.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_reg.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/sens_struct.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/rtc_io_types.h \
+ .pio/libdeps/esp32dev/GyverIO/src/gio/gio_defs.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/PinIO.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/PinT.h \
+ .pio/libdeps/esp32dev/GyverIO/src/utils/shift.h \
+ .pio/libdeps/esp32dev/GyverDS18/src/utils/utils.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
+ .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampCore.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/LittleFS/src/LittleFS.h \
  .pio/libdeps/esp32dev/Settings/src/SettingsGyver.h \
  .pio/libdeps/esp32dev/GyverHTTP/src/GyverHTTP.h \
@@ -306,39 +335,10 @@
  .pio/libdeps/esp32dev/Settings/src/core/updater.h \
  .pio/libdeps/esp32dev/Settings/src/core/DnsWrapper.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  .pio/libdeps/esp32dev/Settings/src/core/ota.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
  .pio/libdeps/esp32dev/Settings/src/web/settings.h \
- .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h \
- .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
- .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
- .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
- .pio/libdeps/esp32dev/Stamp/src/core/StampCore.h \
- .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
- .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
- .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
- .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
- .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18.h \
- .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18Single.h \
- .pio/libdeps/esp32dev/GyverDS18/src/utils/GyverOneWire.h \
- .pio/libdeps/esp32dev/GyverIO/src/GyverIO.h \
- .pio/libdeps/esp32dev/GyverIO/src/gio/gio.h \
- .pio/libdeps/esp32dev/GyverIO/src/gio/gio_esp32.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include/driver/rtc_io.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/include/soc/rtc_io_periph.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_channel.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_reg.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_io_struct.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_reg.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_struct.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include/soc/sens_struct.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/rtc_io_types.h \
- .pio/libdeps/esp32dev/GyverIO/src/gio/gio_defs.h \
- .pio/libdeps/esp32dev/GyverIO/src/utils/PinIO.h \
- .pio/libdeps/esp32dev/GyverIO/src/utils/PinT.h \
- .pio/libdeps/esp32dev/GyverIO/src/utils/shift.h \
- .pio/libdeps/esp32dev/GyverDS18/src/utils/utils.h src/data.h \
- src/settings.h src/userTimers.h src/nastroyki.h
+ .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h src/data.h \
+ src/nastroyki.h src/settings.h src/userTimers.h
