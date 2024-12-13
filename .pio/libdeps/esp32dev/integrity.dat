@@ -1,4 +1,5 @@
+gyverlibs/GyverDS18@^1.1.2
+gyverlibs/GyverNTP@^2.1.2
+gyverlibs/GyverDB@^1.1.8
 gyverlibs/Settings@^1.1.10
 gyverlibs/WiFiConnector@^1.0.4
-gyverlibs/GyverNTP@^2.1.2
-gyverlibs/GyverDS18@^1.1.2

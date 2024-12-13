@@ -23,31 +23,40 @@ Data data;
 
 struct Data  // обьявляем класс структуры
 {
-    uint32_t secondsNow = 12;
+    uint32_t secondsNow = 44000ul;
     uint32_t secondsUptime = 1;
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
-    bool t1discr_enbl = 0; 
+    bool t1discr_enbl = 0;
     bool rel1_on = 0;
+    bool t2discr_enbl = 0;
     bool rel2_on = 0;
+    bool t3discr_enbl = 0;
     bool rel3_on = 0;
+    bool t4discr_enbl = 0;
     bool rel4_on = 0;
+    bool t5discr_enbl = 0;
     bool rel5_on = 0;
+    bool t6discr_enbl = 0;
     bool rel6_on = 0;
+
     int16_t temp_ds1 = 18;  // датчик температуры
+
     // природное освещение
     bool t1f_enbl = 0;  // ползунок переключатель в веб интерфесе()
-    bool t1isWorks = 0; // на данный момент Природное светится
-    uint32_t t1Sunrise_step = 1;  // шаг рассвета
-    uint32_t t1f1_time = 21600;   // рассвет в 6 по дефолту
-    uint32_t t1f2_time = 25200;   // утро начинается в 7
-    uint32_t t1f3_time = 43200;   // обед в 12
-    uint32_t t1f4_time = 64800;   // ужин в 18
-    uint32_t t1f5_time = 72000;   // закат в  в 20
-    uint32_t t1f6_time = 75600;   // полная тьма в  в 21
-    uint32_t t1Sunset_step = 1;   // шаг заката
-    uint32_t t1f2_dim = 50;       // яркость утром
-    uint32_t t1f3_dim = 80;       // яркость обед
-    uint32_t t1f4_dim = 70;       // яркость ужин
+    // bool t1isWorks = 0; // на данный момент Природное светится
+    uint32_t natureSec = 0;         // яркость обновлять будем каждую секунду, эта пер. для таймера
+    uint32_t t1Sunrise_step = 1;    // шаг рассвета
+    uint32_t t1f1_time = 21600;     // рассвет в 6 по дефолту
+    uint32_t t1f2_time = 25200;     // утро начинается в 7
+    uint32_t t1f3_time = 43200;     // обед в 12
+    uint32_t t1f4_time = 64800;     // ужин в 18
+    uint32_t t1f5_time = 72000;     // закат в  в 20
+    uint32_t t1f6_time = 75600;     // полная тьма в  в 21
+    uint32_t t1Sunset_step = 1;     // шаг заката
+    uint32_t t1f2_dim = 50;         // яркость утром
+    uint32_t t1f3_dim = 80;         // яркость обед
+    uint32_t t1f4_dim = 70;         // яркость ужин
+    bool timer_nature_applied = 1;  // флаг на обновление  настроек природного освещения
 
     // аквамен дозатор
     bool aquaDoz1isWorks = 0;

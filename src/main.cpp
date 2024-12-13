@@ -28,12 +28,12 @@
 
 // обявление фкнций для их видимости из вкладок.
 
-Timer each60Sec(60000);  // таймер раз в минуту
-Timer each5min(300000);  // таймер раз в минуту
+Timer each5Sec(5000);  // таймер раз в минуту
+Timer each5min(300000);  // таймер раз в 5 мин
 Timer eachSec(1000);     // таймер раз в сек
 
 LED indikator(INDIKATOR, 300, 3, 50, 20);  // каждые 1000 милисек мигаем 3 раза каждых 50 мс, время горения 20 мсек
-bool gotWifi = 0; // если подключено было к сети, то пробуем реконектиться каждых 5 мин
+bool gotWifi = 0;                          // если подключено было к сети, то пробуем реконектиться каждых 5 мин
 int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
@@ -42,9 +42,9 @@ byte initially = 5;  // первых 10 секунд приписываем вр
 void setup() {
     each5min.rst();
     init_pins();
-    read_t1_from_db();  // читаем из базы в data.xxx для природного освещения
+
     Serial.begin(115200);
-    Serial.println();
+    Serial.println("\n\n\n\t\t\t ESP STARTED !\n\n");
 
     ds1.requestTemp();  // первый запрос на измерение DS18B20
     ds2.requestTemp();  // первый запрос на измерение DS18B20
@@ -64,6 +64,7 @@ void setup() {
     db.begin();
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
+    db.init(kk::ntp_gmt, 5);
     db.init(kk::t1Discr_name, "Реле 1");
     db.init(kk::t1Discr_enabled, 0);
     db.init(kk::t1Discr_startTime, 21600ul);
@@ -121,15 +122,31 @@ void setup() {
     db.init(kk::btnColor, 0xff00aa);
     db.dump(Serial);
 
+    // первый запуск всех исполнительных механизмов
+    data.timer_nature_applied = 1;  // запустим природное освещение
+    data.t1f_enbl = db[kk::t1f_enabled];
+    userNatureTimer();
+    data.t1discr_enbl = db[kk::t1Discr_enabled];  // запустим суточные таймеры
+    data.t2discr_enbl = db[kk::t2Discr_enabled];
+    data.t3discr_enbl = db[kk::t3Discr_enabled];
+    data.t4discr_enbl = db[kk::t4Discr_enabled];
+    data.t5discr_enbl = db[kk::t5Discr_enabled];
+    data.t6discr_enbl = db[kk::t6Discr_enabled];
+    userSixTimers();
+
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
     WiFiConnector.setPass("1234567890");  // пароль точки доступа
     WiFiConnector.setTimeout(10);         // сколько секунд пытаться приконнектиттся
     WiFiConnector.onConnect([]() {
-        Serial.print("Connected! ");
-        gotWifi = 1;
+        Serial.print("Con with IP: ");
         Serial.println(WiFi.localIP());
         indikator.setPeriod(3000, 1, 200, 150);  // раз в 000 сек, 0 раз взмигнем - по 00 милисек периоды, гореть будем 0 милисек
+        gotWifi = 1;
+        NTP.begin();
+        NTP.setPeriod(600);  // обновлять раз в 600 сек
+        NTP.tick();
+        NTP.setGMT(db[kk::ntp_gmt]);
     });
     WiFiConnector.onError([]() {
         Serial.print("Error! start AP ");
@@ -145,18 +162,15 @@ void setup() {
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
 
-    NTP.begin(5);        // часовой пояс. Для Москвы: 3. Худжанд, Нск 5. Обновляться раз в 600 сек
-    NTP.setPeriod(600);  // обновлять раз в 600 сек
-    NTP.tick();
-
 }  // setup
 
 void loop() {
     WiFiConnector.tick();  // поддержка wifi связи
     sett.tick();           // поддержка веб интерфейса
-    indikator.tick();      // in loop
+    NTP.tick();
+    indikator.tick();  // in loop
 
-    if (each60Sec.ready())  // раз в минуту
+    if (each5Sec.ready())  // раз в минуту
     {
         // поддержка NTP
         // делаем тут, а не в лупе,
@@ -165,29 +179,34 @@ void loop() {
         if (!NTP.status() && NTP.synced()) {
             data.secondsNow = NTP.daySeconds();
         } else
-            Serial.print("\n\n\tNTP discon\n\n");
+            Serial.print("\n\n\tNTP not reached\n\n");
 
     }  // each60Sec
 
     if (eachSec.ready()) {  // раз в сек
 
-        NTP.tick();
-
-        if (initially)  // костыль для подхвата ntp, потому что если ntp отвалился, нельзя все время его чекать, мы его выше чекаем раз в минуту всего
-        {
-            initially--;
-            data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
-        }
+        // if (initially)  // костыль для подхвата ntp, потому что если ntp отвалился, нельзя все время его чекать, мы его выше чекаем раз в минуту всего
+        // {
+        //     initially--;
+        //     data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
+        // }
         data.secondsNow++;     // инкермент реалтайм
         data.secondsUptime++;  // инкермент аптайм
     }
+
+    userSixTimers();
+    userNatureTimer();
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");
     //   Serial.println(millis());
     // }
+    // static bool prevPinState = 0;
+    // if(digitalRead(RELE_4) != prevPinState){
+    //     prevPinState = digitalRead(RELE_4);
+    //     Serial.print("RELE_4 = ");
+    //     Serial.print(prevPinState);
+    //     Serial.print("\n");
+    // }
 
-
-    userSixTimers();
-    userNatureTimer();
 }  // loop

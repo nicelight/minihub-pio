@@ -332,4 +332,12 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
- .pio/libdeps/esp32dev/Settings/src/web/settings.h
+ .pio/libdeps/esp32dev/Settings/src/web/settings.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
+ .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampCore.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h
