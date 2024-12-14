@@ -20,10 +20,13 @@ static bool notice_f;  // флаг на отправку уведомления 
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
+    // upd.update(kk::datime, curDataTime.getUnix());
     upd.update(kk::datime, curDataTime);
+    // upd.update(kk::datime, NTP.getUnix()); // работает
     upd.update(kk::secondsNow, data.secondsNow);
     upd.update(kk::secondsUptime, data.secondsUptime);
-    upd.update("lbl1"_h, random(100));
+    // upd.update("lbl1"_h, random(100));
+    upd.update("lbl1"_h, curDataTime.weekDay);
     upd.update("lbl2"_h, millis());
     upd.update("t1Discr_led"_h, data.rel1_on);
     upd.update("t2Discr_led"_h, data.rel2_on);
@@ -168,8 +171,6 @@ void build(sets::Builder &b) {
     // WEB интерфейс ВЕБ морда формируется здесь
     {
         sets::Group g(b, "Nicelight");
-        //        b.Time(kk::secondsNow, "Вермечко", sets::Colors::Red);
-        // b.Time(kk::secondsUptime, "Аптайм", 0x3995db);
         if (NTP.synced()) {
             b.DateTime(kk::datime, "Datime");
         }
@@ -265,9 +266,17 @@ void build(sets::Builder &b) {
         }
         if (data.t6discr_enbl) {
             // if (db[kk::t6Discr_enabled].toBool()) {
-            b.LED("t6Discr_led"_h, "Cтатус >>", data.rel6_on, sets::Colors::Black, sets::Colors::Violet);
+            b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Black, sets::Colors::Violet);
             b.Time(kk::t6Discr_startTime, "Вкл в ..");
             b.Time(kk::t6Discr_endTime, ".. откл");
+            b.Label("Дни недели", " ");
+            b.Switch(kk::t6Discr_inMonday, "Понедельник", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inTuesday, "Вторник", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inWensday, "Среда", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inThursday, "Четверг", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inFriday, "Пятница", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inSaturday, "Суббота", nullptr, sets::Colors::Violet);
+            b.Switch(kk::t6Discr_inSunday, "Воскресенье", nullptr, sets::Colors::Violet);
             b.Label(" ", " ");
             b.Label(" ", " ");
         }
@@ -483,7 +492,7 @@ void build(sets::Builder &b) {
                     b.Label(kk::lbl1, "lable1");
                     b.Label(kk::lbl2, "millis()", "", sets::Colors::Red);
                     b.Date(kk::date, "Date");
-                    b.DateTime(kk::datime, "Datime");
+                    // b.DateTime(kk::datime, "Datime");
                     b.Color(kk::color, "Color");
                     //    b.Switch(kk::toggle2, "Switch");
                     b.Select(kk::selectw, "Select", "var1;var2;hello");

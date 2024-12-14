@@ -11,8 +11,8 @@
 #define RELE_2 16
 #define RELE_3 17
 #define RELE_4 5
-#define RELE_5 18
-#define RELE_6 19
+#define RELE_5 19
+#define RELE_6 18
 
 // #define ON 0  // включение релюшек логическим нулем или единицей
 // #define OFF 1 //

@@ -44,6 +44,14 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_enabled,
     t6Discr_startTime,
     t6Discr_endTime,
+    t6Discr_inMonday,
+    t6Discr_inTuesday,
+    t6Discr_inWensday,
+    t6Discr_inThursday,
+    t6Discr_inFriday,
+    t6Discr_inSaturday,
+    t6Discr_inSunday,
+    
 
     t1f_enabled,
     t1f_led,

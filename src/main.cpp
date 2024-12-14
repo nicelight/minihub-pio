@@ -28,7 +28,7 @@
 
 // обявление фкнций для их видимости из вкладок.
 
-Timer each5Sec(5000);  // таймер раз в минуту
+Timer each5Sec(5000);    // таймер раз в минуту
 Timer each5min(300000);  // таймер раз в 5 мин
 Timer eachSec(1000);     // таймер раз в сек
 
@@ -85,10 +85,17 @@ void setup() {
     db.init(kk::t5Discr_enabled, 0);
     db.init(kk::t5Discr_startTime, 21600ul);
     db.init(kk::t5Discr_endTime, 72000ul);
-    db.init(kk::t6Discr_name, "Реле 6");
+    db.init(kk::t6Discr_name, "Реле 6 недельное");
     db.init(kk::t6Discr_enabled, 0);
     db.init(kk::t6Discr_startTime, 21600ul);
     db.init(kk::t6Discr_endTime, 72000ul);
+    db.init(kk::t6Discr_inMonday, 0);
+    db.init(kk::t6Discr_inTuesday, 0);
+    db.init(kk::t6Discr_inWensday, 0);
+    db.init(kk::t6Discr_inThursday, 0);
+    db.init(kk::t6Discr_inFriday, 0);
+    db.init(kk::t6Discr_inSaturday, 0);
+    db.init(kk::t6Discr_inSunday, 0);
 
     db.init(kk::t1f_enabled, (bool)0);
     db.init(kk::t1f1_startTime, 21600ul);
@@ -170,7 +177,7 @@ void loop() {
     NTP.tick();
     indikator.tick();  // in loop
 
-    if (each5Sec.ready())  // раз в минуту
+    if (each5Sec.ready())  // раз в 5 сек
     {
         // поддержка NTP
         // делаем тут, а не в лупе,
@@ -178,6 +185,8 @@ void loop() {
 
         if (!NTP.status() && NTP.synced()) {
             data.secondsNow = NTP.daySeconds();
+            curDataTime = NTP.getUnix();
+
         } else
             Serial.print("\n\n\tNTP not reached\n\n");
 
@@ -190,6 +199,9 @@ void loop() {
         //     initially--;
         //     data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
         // }
+        Serial.print("day of week: ");
+        Serial.print(curDataTime.weekDay);
+        Serial.print("\n");
         data.secondsNow++;     // инкермент реалтайм
         data.secondsUptime++;  // инкермент аптайм
     }

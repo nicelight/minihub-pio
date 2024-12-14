@@ -10,8 +10,9 @@ GyverDS18Single ds1(PIN_DS18B20_1);  // пин
 GyverDS18Single ds2(PIN_DS18B20_2);  // пин
 
 static uint16_t RED_PWM, GREEN_PWM, BLUE_PWM;  // Значения компонентов Red, Green, Blue (0–4095)
-static uint16_t brightness = 4095;             // Максимальная яркость (4095 для 12-битного PWM)
-static byte t1fase = 0;                        // автомат состояний каждой фазы природного освещения
+static bool t6_rightDay = 0;
+static uint16_t brightness = 4095;  // Максимальная яркость (4095 для 12-битного PWM)
+static byte t1fase = 0;             // автомат состояний каждой фазы природного освещения
 // static bool data.t1isWorks = 0;                     // прямо сейчас работает
 static uint32_t t1fase_prevSeconds = 0;  // секунденый таймер для отрисовки природного освещения
 static byte curr_sunrise_dim = 0;        // шаги яркости при рассвете
@@ -316,10 +317,42 @@ void userSixTimers() {
             data.rel5_on = 0;
         }
     }
+
+    // проверяем, правильный ли день для включения таймера
+    switch (curDataTime.weekDay) {
+        case 1:
+            if (db[kk::t6Discr_inMonday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 2:
+            if (db[kk::t6Discr_inTuesday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 3:
+            if (db[kk::t6Discr_inWensday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 4:
+            if (db[kk::t6Discr_inThursday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 5:
+            if (db[kk::t6Discr_inFriday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 6:
+            if (db[kk::t6Discr_inSaturday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+        case 7:
+            if (db[kk::t6Discr_inSunday].toInt() == 1) t6_rightDay = 1;
+            else t6_rightDay = 0;
+            break;
+    }
     // таймер 6===
     //=== таймер Реле 6
     // if (db[kk::t6Discr_enabled].toBool()) {
-    if (data.t6discr_enbl) {
+    if (data.t6discr_enbl && t6_rightDay) {
         if (db[kk::t6Discr_startTime].toInt() < db[kk::t6Discr_endTime].toInt())  // если нет перехода через полночь
         {
             if ((db[kk::t6Discr_startTime].toInt() <= data.secondsNow) && (data.secondsNow <= db[kk::t6Discr_endTime].toInt())) {
@@ -558,7 +591,6 @@ void userNatureTimer() {  //     // Природное освещение
         }  // switch(t1fase)
     }  // timer enabled
     else {
-        
     }
 }  // userNatureTimer()
 //
