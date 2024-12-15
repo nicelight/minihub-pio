@@ -199,15 +199,16 @@ void loop() {
         //     initially--;
         //     data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
         // }
-        Serial.print("day of week: ");
-        Serial.print(curDataTime.weekDay);
-        Serial.print("\n");
         data.secondsNow++;     // инкермент реалтайм
         data.secondsUptime++;  // инкермент аптайм
+        if (data.secondsUptime == 86399){ // инкремент дней аптайма
+            data.secondsUptime = 0;
+            data.uptime_Days++;
+        }
+        userSixTimers();
+        userNatureTimer();
+        userFertiTimer();
     }
-
-    userSixTimers();
-    userNatureTimer();
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");

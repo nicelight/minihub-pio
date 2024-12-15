@@ -2,8 +2,8 @@
 #pragma once
 #include <Arduino.h>
 #include <GyverDBFile.h>
-#include <SettingsGyver.h>
 #include <GyverNTP.h>
+#include <SettingsGyver.h>
 
 DB_KEYS(  // ключи по которым идет привязка к базе и к виджетам в web
     kk,
@@ -13,6 +13,8 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     ntp_gmt,
     secondsNow,
     secondsUptime,
+    dayofweek,
+    uptimeDays,
 
     t1Discr_name,
     t1Discr_led,
@@ -51,7 +53,6 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t6Discr_inFriday,
     t6Discr_inSaturday,
     t6Discr_inSunday,
-    
 
     t1f_enabled,
     t1f_led,
@@ -67,6 +68,7 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     t1_btn_accept,
 
     aquaDoz1_enabled,
+    aquaDoz1_nextDozeIn,
     aquaDoz1_led,
     aquaDoz1_1time,
     aquaDoz1_2time,
@@ -109,7 +111,7 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     btn1,
     btn2);
 
-extern GyverDBFile db;             // база данных для хранения настроек будет автоматически записываться в файл при изменениях
+extern GyverDBFile db;  // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 extern SettingsGyver sett;
 
 extern Datime curDataTime;

@@ -25,6 +25,9 @@ struct Data  // обьявляем класс структуры
 {
     uint32_t secondsNow = 44000ul;
     uint32_t secondsUptime = 1;
+    byte uptime_Days = 0;
+    // uint32_t secondsUptime = 86390;
+    // byte uptime_Days = 1;
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;
     bool rel1_on = 0;
@@ -59,8 +62,9 @@ struct Data  // обьявляем класс структуры
     bool timer_nature_applied = 1;  // флаг на обновление  настроек природного освещения
 
     // аквамен дозатор
-    bool aquaDoz1isWorks = 0;
-    uint32_t aquaDoz1_time = 0;
+    bool relFerti_on = 0;
+    uint32_t relefertiSec = 0;
+    int32_t untilNextDoze = 86340;  // через сколько следующее включение
 
     //  из примеров Гайвера
     int number = 123456;

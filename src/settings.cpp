@@ -17,17 +17,37 @@ SettingsGyver sett("Горошек для любимой", &db);  // указы�
 Datime curDataTime(NTP);
 static bool notice_f;  // флаг на отправку уведомления о подключении к wifi
 
+static const char *const WEEKdays[] = {
+    "как будто бы вчера",
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота",
+    "Воскресенье. Отдыхаем!"};
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
-    // upd.update(kk::datime, curDataTime.getUnix());
+
     upd.update(kk::datime, curDataTime);
-    // upd.update(kk::datime, NTP.getUnix()); // работает
+
+    // upd.update("weekday"_h, curDataTime.weekDay + String(" день недели"));
+
     upd.update(kk::secondsNow, data.secondsNow);
     upd.update(kk::secondsUptime, data.secondsUptime);
     // upd.update("lbl1"_h, random(100));
-    upd.update("lbl1"_h, curDataTime.weekDay);
-    upd.update("lbl2"_h, millis());
+
+    if (!data.uptime_Days)
+        upd.update(kk::uptimeDays, data.uptime_Days + String(" дней"));  // не работает, если писать выне ша пару строк
+    else if (data.uptime_Days == 1)
+        upd.update(kk::uptimeDays, data.uptime_Days + String(" день"));  // не работает, если писать выне ша пару строк
+    else if (data.uptime_Days < 5)
+        upd.update(kk::uptimeDays, data.uptime_Days + String(" дня"));  // не работает, если писать выне ша пару строк
+    else if (data.uptime_Days >= 5)
+        upd.update(kk::uptimeDays, data.uptime_Days + String(" дней"));  // не работает, если писать выне ша пару строк
+
+    upd.update(kk::dayofweek, WEEKdays[curDataTime.weekDay]);  // день недели выводим, оч красиво, Гайвер посоветовал
     upd.update("t1Discr_led"_h, data.rel1_on);
     upd.update("t2Discr_led"_h, data.rel2_on);
     upd.update("t3Discr_led"_h, data.rel3_on);
@@ -36,7 +56,11 @@ void update(sets::Updater &upd) {
     upd.update("t6Discr_led"_h, data.rel6_on);
 
     // upd.update("t1f_led"_h, data.t1isWorks);
-    upd.update("aquaDoz1_led"_h, data.aquaDoz1isWorks);
+    upd.update("aquaDoz1_led"_h, data.relFerti_on);
+    upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
+
+    upd.update("lbl1"_h, curDataTime.weekDay + String(" день недели"));
+    upd.update("lbl2"_h, millis());
     if (notice_f)  // уведомление при вводе wifi данных
     {
         notice_f = false;
@@ -172,10 +196,13 @@ void build(sets::Builder &b) {
     {
         sets::Group g(b, "Nicelight");
         if (NTP.synced()) {
-            b.DateTime(kk::datime, "Datime");
+            // b.DateTime(kk::datime, "Сегодня ");
+            b.Date(kk::datime, " ");  // текущая дата
         }
+        b.Label(kk::dayofweek, "Сегодня");  // текущая дата
+        b.Label(kk::uptimeDays, "Аптайм");
+        b.Time(kk::secondsUptime, " ");
         b.Time(kk::secondsNow, "Времечко");
-        b.Time(kk::secondsUptime, "Аптайм");
     }
     /* суточные таймеры */
     {
@@ -188,7 +215,7 @@ void build(sets::Builder &b) {
         }
         if (data.t1discr_enbl) {
             // if (db[kk::t1Discr_enabled].toBool()) {
-            b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Black, sets::Colors::Yellow);
+            b.LED("t1Discr_led"_h, "Cтатус >>", data.rel1_on, sets::Colors::Gray, sets::Colors::Yellow);
             // b.Time(kk::t1Discr_startTime, "Включается в ..", 0xf7e5b2);
             b.Time(kk::t1Discr_startTime, "Включается в ..");
             b.Time(kk::t1Discr_endTime, ".. и отключается в");
@@ -204,7 +231,7 @@ void build(sets::Builder &b) {
         }
         if (data.t2discr_enbl) {
             // if (db[kk::t2Discr_enabled].toBool()) {
-            b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Black, sets::Colors::Green);
+            b.LED("t2Discr_led"_h, "Cтатус >>", data.rel2_on, sets::Colors::Gray, sets::Colors::Green);
             b.Time(kk::t2Discr_startTime, "Вкл в ..");
             b.Time(kk::t2Discr_endTime, ".. откл ");
             b.Label(" ", " ");
@@ -219,7 +246,7 @@ void build(sets::Builder &b) {
         }
         if (data.t3discr_enbl) {
             // if (db[kk::t3Discr_enabled].toBool()) {
-            b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Black, sets::Colors::Mint);
+            b.LED("t3Discr_led"_h, "Cтатус >>", data.rel3_on, sets::Colors::Gray, sets::Colors::Mint);
             b.Time(kk::t3Discr_startTime, "Вкл в ..");
             b.Time(kk::t3Discr_endTime, ".. откл");
             b.Label(" ", " ");
@@ -235,7 +262,7 @@ void build(sets::Builder &b) {
         }
         if (data.t4discr_enbl) {
             // if (db[kk::t4Discr_enabled].toBool()) {
-            b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Black, sets::Colors::Aqua);
+            b.LED("t4Discr_led"_h, "Cтатус >>", data.rel4_on, sets::Colors::Gray, sets::Colors::Aqua);
             b.Time(kk::t4Discr_startTime, "Вкл в ..");
             b.Time(kk::t4Discr_endTime, ".. откл");
             b.Label(" ", " ");
@@ -251,7 +278,7 @@ void build(sets::Builder &b) {
         }
         if (data.t5discr_enbl) {
             // if (db[kk::t5Discr_enabled].toBool()) {
-            b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Black, sets::Colors::Blue);
+            b.LED("t5Discr_led"_h, "Cтатус >>", data.rel5_on, sets::Colors::Gray, sets::Colors::Blue);
             b.Time(kk::t5Discr_startTime, "Вкл в ..");
             b.Time(kk::t5Discr_endTime, ".. откл");
             b.Label(" ", " ");
@@ -266,7 +293,7 @@ void build(sets::Builder &b) {
         }
         if (data.t6discr_enbl) {
             // if (db[kk::t6Discr_enabled].toBool()) {
-            b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Black, sets::Colors::Violet);
+            b.LED("t6Discr_led"_h, "Статус >>", data.rel6_on, sets::Colors::Gray, sets::Colors::Violet);
             b.Time(kk::t6Discr_startTime, "Вкл в ..");
             b.Time(kk::t6Discr_endTime, ".. откл");
             b.Label("Дни недели", " ");
@@ -307,7 +334,7 @@ void build(sets::Builder &b) {
         if (data.t1f_enbl) {
             // if (db[kk::t1f_enabled]) {
             // if (db[kk::t1f_enabled].toBool()) {
-            // b.LED("t1f_led"_h, "Cтатус >>", data.t1isWorks, sets::Colors::Black, sets::Colors::Orange);
+            // b.LED("t1f_led"_h, "Cтатус >>", data.t1isWorks, sets::Colors::Gray, sets::Colors::Orange);
             b.Time(kk::t1f1_startTime, "Рассвет начинается с");
             b.Time(kk::t1f2_startTime, "Утро с");
             b.Slider(kk::t1f2_dim, "яркость утром");
@@ -335,66 +362,70 @@ void build(sets::Builder &b) {
     // добавить в базу состояние вклю выкл и временные шняги
     {
         sets::Group g(b, "Мультитаймер");
-        if (b.Switch(kk::aquaDoz1_enabled, "Дозатор удобрений", nullptr, sets::Colors::Aqua)) {
-            // userNatureTimer();
+        if (b.Switch(kk::aquaDoz1_enabled, "Дозатор", nullptr, sets::Colors::Aqua)) {
+            // data.tFerti_enbl = db[kk::aquaDoz1_enabled].toBool();
+            userFertiTimer();
             b.reload();
         }
         if (db[kk::aquaDoz1_enabled].toBool()) {
-            b.LED("aquaDoz1_led"_h, "Cтатус >>", data.aquaDoz1isWorks, sets::Colors::Black, sets::Colors::Aqua);
+            b.LED("aquaDoz1_led"_h, "Cтатус >>", data.relFerti_on, sets::Colors::Gray, sets::Colors::Aqua);
             b.Time(kk::aquaDoz1_1time, "Первый раз в");
             b.Time(kk::aquaDoz1_2time, "Второй раз в");
-            if (b.Switch(kk::aquaDoz1_need3rd, "Еще подача", nullptr, sets::Colors::Aqua)) {
+            if (b.Switch(kk::aquaDoz1_need3rd, "Больше доз", nullptr, sets::Colors::Aqua)) {
                 // userNatureTimer();
                 b.reload();
             }
-            if (db[kk::aquaDoz1_need3rd].toBool())
-                b.Time(kk::aquaDoz1_3time, "в");
-
-            if (b.Switch(kk::aquaDoz1_need4th, "Еще подача", nullptr, sets::Colors::Aqua)) {
-                // userNatureTimer();
-                b.reload();
-            }
-            if (db[kk::aquaDoz1_need4th].toBool())
-                b.Time(kk::aquaDoz1_4time, "в");
-
-            if (b.Switch(kk::aquaDoz1_need5th, "Еще подача", nullptr, sets::Colors::Aqua)) {
-                // userNatureTimer();
-                b.reload();
-            }
-            if (db[kk::aquaDoz1_need5th].toBool())
-                b.Time(kk::aquaDoz1_5time, "в");
-            if (b.Switch(kk::aquaDoz1_need6th, "Еще подача", nullptr, sets::Colors::Aqua)) {
-                // userNatureTimer();
-                b.reload();
-            }
-            if (db[kk::aquaDoz1_need6th].toBool())
-                b.Time(kk::aquaDoz1_6time, "в");
-            if (b.Switch(kk::aquaDoz1_need7th, "Еще подача", nullptr, sets::Colors::Aqua)) {
-                // userNatureTimer();
-                b.reload();
-            }
-            if (db[kk::aquaDoz1_need7th].toBool())
-                b.Time(kk::aquaDoz1_7time, "в");
-            if (b.Switch(kk::aquaDoz1_need8th, "Еще подача", nullptr, sets::Colors::Aqua)) {
-                // userNatureTimer();
-                b.reload();
-            }
-            if (db[kk::aquaDoz1_need8th].toBool())
-                b.Time(kk::aquaDoz1_8time, "в");
+            if (db[kk::aquaDoz1_need3rd].toBool()) {
+                b.Time(kk::aquaDoz1_3time, "Еще подача в");
+                if (b.Switch(kk::aquaDoz1_need4th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                    // userNatureTimer();
+                    b.reload();
+                }
+                if (db[kk::aquaDoz1_need4th].toBool()) {
+                    b.Time(kk::aquaDoz1_4time, "в");
+                    if (b.Switch(kk::aquaDoz1_need5th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                        // userNatureTimer();
+                        b.reload();
+                    }
+                    if (db[kk::aquaDoz1_need5th].toBool())
+                        b.Time(kk::aquaDoz1_5time, "в");
+                    if (b.Switch(kk::aquaDoz1_need6th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                        // userNatureTimer();
+                        b.reload();
+                    }
+                    if (db[kk::aquaDoz1_need6th].toBool())
+                        b.Time(kk::aquaDoz1_6time, "в");
+                    if (b.Switch(kk::aquaDoz1_need7th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                        // userNatureTimer();
+                        b.reload();
+                    }
+                    if (db[kk::aquaDoz1_need7th].toBool())
+                        b.Time(kk::aquaDoz1_7time, "в");
+                    if (b.Switch(kk::aquaDoz1_need8th, "Еще подача", nullptr, sets::Colors::Aqua)) {
+                        // userNatureTimer();
+                        b.reload();
+                    }
+                    if (db[kk::aquaDoz1_need8th].toBool())
+                        b.Time(kk::aquaDoz1_8time, "в");
+                }  // 4th
+            }  // 3rd
 
             b.Time(kk::aquaDoze1_dozeTime, "Подача дозы в течении");
-            if (b.Button(kk::aquaDoz1_btn_accept, "Обновить", sets::Colors::Aqua)) {
-                //  Serial.println("\n\n\tApplied\n\n");
-                // data.timer_nature_applied = 1;
-                // userNatureTimer();
-                b.reload();
-            }
+            // if (b.Button(kk::aquaDoz1_btn_accept, "Обновить", sets::Colors::Aqua)) {
+            //     //  Serial.println("\n\n\tApplied\n\n");
+            //     // data.timer_nature_applied = 1;
+            //     // userNatureTimer();
+            //     b.reload();
+            // }
 
             b.Label(" ", " ");
+            b.Label(" ", " ");
+            b.Time("aquaDoz1_nextDozeIn"_h, "Следующая доза через");
             if (b.Button(kk::aquaDoz1_makeDoze, "Дать дозу", sets::Colors::Gray)) {
                 //  Serial.println("\n\n\tApplied\n\n");
                 // data.timer_nature_applied = 1;
                 // userNatureTimer();
+                releFertiProcess = 10;
                 b.reload();
             }
 
@@ -490,6 +521,7 @@ void build(sets::Builder &b) {
                 {
                     sets::Group g(b, "Group 3");
                     b.Label(kk::lbl1, "lable1");
+                    // b.Label(kk::uptimeDays, "Uptime");
                     b.Label(kk::lbl2, "millis()", "", sets::Colors::Red);
                     b.Date(kk::date, "Date");
                     // b.DateTime(kk::datime, "Datime");

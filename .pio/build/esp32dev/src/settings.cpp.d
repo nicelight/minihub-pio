@@ -173,14 +173,7 @@
  .pio/libdeps/esp32dev/FOR_MACRO/FOR_MACRO.h \
  .pio/libdeps/esp32dev/GyverDB/src/utils/entry.h \
  .pio/libdeps/esp32dev/GyverDB/src/utils/block.h \
- .pio/libdeps/esp32dev/Settings/src/SettingsGyver.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/GyverHTTP.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/utils/Client.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Client.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/utils/HeadersParser.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/utils/cfg.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/StreamReader.h \
- .pio/libdeps/esp32dev/GyverHTTP/src/utils/EspClient.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
@@ -234,11 +227,27 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiAP.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiScan.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Client.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiServer.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Server.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
+ .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
+ .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampCore.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
+ .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
+ .pio/libdeps/esp32dev/Settings/src/SettingsGyver.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/GyverHTTP.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/utils/Client.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/utils/HeadersParser.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/utils/cfg.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/StreamReader.h \
+ .pio/libdeps/esp32dev/GyverHTTP/src/utils/EspClient.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/ssl_client.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mbedtls/mbedtls/include/mbedtls/platform.h \
@@ -305,20 +314,11 @@
  .pio/libdeps/esp32dev/Settings/src/core/updater.h \
  .pio/libdeps/esp32dev/Settings/src/core/DnsWrapper.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
- C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  .pio/libdeps/esp32dev/Settings/src/core/ota.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/libraries/Update/src/Update.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/MD5Builder.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
  .pio/libdeps/esp32dev/Settings/src/web/settings.h \
- .pio/libdeps/esp32dev/GyverNTP/src/GyverNTP.h \
- .pio/libdeps/esp32dev/GyverNTP/src/GyverNTPClient.h \
- .pio/libdeps/esp32dev/Stamp/src/StampTicker.h \
- .pio/libdeps/esp32dev/Stamp/src/core/StampCore.h \
- .pio/libdeps/esp32dev/Stamp/src/core/Datime.h \
- .pio/libdeps/esp32dev/Stamp/src/core/DaySeconds.h \
- .pio/libdeps/esp32dev/Stamp/src/core/StampUtils.h \
- .pio/libdeps/esp32dev/Stamp/src/core/stamp_zone.h \
  .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h src/data.h \
  src/nastroyki.h src/userTimers.h \
  .pio/libdeps/esp32dev/GyverDS18/src/GyverDS18.h \

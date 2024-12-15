@@ -14,6 +14,8 @@
 #define RELE_5 19
 #define RELE_6 18
 
+#define RELE_FERTILIZER 18
+
 // #define ON 0  // включение релюшек логическим нулем или единицей
 // #define OFF 1 //
 #define ON 1  // включение симмисторов лог. единицей

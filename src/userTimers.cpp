@@ -18,6 +18,8 @@ static uint32_t t1fase_prevSeconds = 0;  // секунденый таймер д
 static byte curr_sunrise_dim = 0;        // шаги яркости при рассвете
 static byte curr_sunset_dim = 0;         // шаги яркости при закате
 
+byte releFertiProcess = 0;  // автомат подачи дозы удобрений
+
 void init_pins() {
     pinMode(RELE_1, OUTPUT);
     digitalWrite(RELE_1, OFF);
@@ -318,7 +320,8 @@ void userSixTimers() {
         }
     }
 
-    // проверяем, правильный ли день для включения таймера
+    // таймер 6===
+    // проверяем, правильный ли день для включения таймера 6
     switch (curDataTime.weekDay) {
         case 1:
             if (db[kk::t6Discr_inMonday].toInt() == 1) t6_rightDay = 1;
@@ -349,7 +352,6 @@ void userSixTimers() {
             else t6_rightDay = 0;
             break;
     }
-    // таймер 6===
     //=== таймер Реле 6
     // if (db[kk::t6Discr_enabled].toBool()) {
     if (data.t6discr_enbl && t6_rightDay) {
@@ -599,3 +601,113 @@ void userNatureTimer() {  //     // Природное освещение
 
 // таймер автодозатора от Аквамена
 // https://www.youtube.com/watch?v=XGLbtAAbIi4&feature=youtu.be
+void userFertiTimer() {
+    // if (data.tFerti_enbl) {
+    if (db[kk::aquaDoz1_enabled].toInt()) {
+        // Serial.print ("\n db[kk::aquaDoz1_1time].toInt():");
+        // Serial.print(db[kk::aquaDoz1_1time].toInt());
+        // Serial.print (":");
+        // Serial.print (data.secondsNow);
+        // Serial.println (" data.secondsNow");
+
+        int32_t untilNextDoze2 = 86340;  // через сколько следующее включение
+        // проверяем разницу текущего времени и времени до след дозы
+        // сравниваем с разницей из предыдущего вычисления
+        //  та которая ниже, сохраняем в data.untilNextDoze
+        data.untilNextDoze = db[kk::aquaDoz1_1time].toInt() - data.secondsNow;
+        if (!data.untilNextDoze) releFertiProcess = 10;               // ON
+        else if (data.untilNextDoze < 0) data.untilNextDoze = 86340;  // 23:59
+
+        untilNextDoze2 = db[kk::aquaDoz1_2time].toInt() - (int)data.secondsNow;
+        if (!untilNextDoze2) releFertiProcess = 10;  // ON
+        else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            if (untilNextDoze2 < data.untilNextDoze)
+                data.untilNextDoze = untilNextDoze2;
+        }
+        if (db[kk::aquaDoz1_need3rd].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_3time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+        if (db[kk::aquaDoz1_need4th].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_4time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+        if (db[kk::aquaDoz1_need5th].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_5time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+        if (db[kk::aquaDoz1_need6th].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_6time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+        if (db[kk::aquaDoz1_need7th].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_7time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+        if (db[kk::aquaDoz1_need8th].toInt()) {
+            untilNextDoze2 = db[kk::aquaDoz1_8time].toInt() - data.secondsNow;
+            if (!untilNextDoze2) releFertiProcess = 10;  // ON
+            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+                if (untilNextDoze2 < data.untilNextDoze)
+                    data.untilNextDoze = untilNextDoze2;
+            }
+        }
+
+    } else {
+        if (data.relFerti_on)       // если было включено, выключим
+            releFertiProcess = 30;  // OFF
+    }
+    // Serial.print("\nreleFertiProcess: ");
+    // Serial.println(releFertiProcess);
+
+    switch (releFertiProcess) {
+        case 0:
+            // data.relefertiSec = data.secondsNow;
+            break;
+        case 10:
+            digitalWrite(RELE_FERTILIZER, ON);
+            data.relefertiSec = data.secondsNow;
+            data.relFerti_on = 1;
+            releFertiProcess = 20;
+            // break;
+        case 20:
+            Serial.print("\n db[kk::aquaDoze1_dozeTime].toInt():");
+            Serial.print(db[kk::aquaDoze1_dozeTime].toInt());
+            Serial.print(" : ");
+            Serial.print(data.secondsNow - data.relefertiSec);
+            Serial.print(":Now-fert");
+            Serial.print("\t\tsNow:");
+            Serial.print(data.secondsNow);
+            Serial.print("\tfertiSec:");
+            Serial.println(data.relefertiSec);
+            if ((data.secondsNow - data.relefertiSec) >= db[kk::aquaDoze1_dozeTime].toInt()) {
+                releFertiProcess = 30;
+            }
+            break;
+        case 30:
+            digitalWrite(RELE_FERTILIZER, OFF);
+            data.relFerti_on = 0;
+            releFertiProcess = 0;
+            break;
+    }  // switch
+}  // userFertiTimer()
