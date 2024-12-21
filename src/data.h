@@ -66,6 +66,10 @@ struct Data  // обьявляем класс структуры
     uint32_t relefertiSec = 0;
     int32_t untilNextDoze = 86340;  // через сколько следующее включение
 
+    int16_t hdht1 = -80; // темп, влажность первого DHT22 
+    int16_t tdht1 = -80;
+    float floattdht1 = -80.0;
+     
     //  из примеров Гайвера
     int number = 123456;
     String label = "label";

@@ -341,4 +341,6 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include/esp_rom_md5.h \
  .pio/libdeps/esp32dev/Settings/src/web/settings.h \
  .pio/libdeps/esp32dev/WiFiConnector/src/WiFiConnector.h src/data.h \
- src/nastroyki.h src/settings.h src/userTimers.h
+ src/nastroyki.h src/sensors.h \
+ .pio/libdeps/esp32dev/DHT\ sensor\ library/DHT.h src/settings.h \
+ src/userTimers.h

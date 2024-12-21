@@ -1,48 +1,21 @@
-Datime dt(NTP);
+float h = dht1.readHumidity();
 
-switch (db[kk::clock_style].toInt()) {
-    case 1:
-        matrix.setFont(gfx_font_3x5);
+  // Read temperature as Celsius (the default)
+  float t = dht1.readTemperature();
 
-        matrix.setCursor(1, 1);
-        if (dt.hour < 10) matrix.print(' ');
-        matrix.print(dt.hour);
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t)) {
+    Serial.println(F("Failed to read from dht1 sensor!"));
+    return;
+  }
 
-        matrix.setCursor(11, 1);
-        if (dt.minute < 10) matrix.print(0);
-        matrix.print(dt.minute);
-
-        dots(9, 9);
-        break;
-
-    case 2:
-        matrix.setFont(font_3x5_diag);
-
-        matrix.setCursor(1, 1);
-        if (dt.hour < 10) matrix.print(' ');
-        matrix.print(dt.hour);
-
-        matrix.setCursor(11, 1);
-        if (dt.minute < 10) matrix.print(0);
-        matrix.print(dt.minute);
-
-        dots(9, 9);
-        break;
-
-    case 3:
-        matrix.setFont(font_4x5);
-
-        if (dt.hour >= 10) {
-            matrix.setCursor(1, 1);
-            matrix.print(dt.hour / 10);
-        }
-        matrix.setCursor(5, 1);
-        matrix.print(dt.hour % 10);
-
-        matrix.setCursor(11, 1);
-        matrix.print(dt.minute / 10);
-        matrix.setCursor(15, 1);
-        matrix.print(dt.minute % 10);
+  float hic = dht1.computeHeatIndex(t, h, false);   // Compute heat index in Celsius (isFahreheit = false)
 
 
-}
+  Serial.print(F("Humidity: "));
+  Serial.print(h);
+  Serial.print(F("%  Temperature: "));
+  Serial.print(t);
+  Serial.print(F("°C  Heat index: "));
+  Serial.print(hic);
+  Serial.print(F("°C "));

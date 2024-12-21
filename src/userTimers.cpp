@@ -3,11 +3,12 @@
 #include <Arduino.h>
 
 #include "data.h"
-#include "nastroyki.h"
 #include "settings.h"
+#include "sensors.h"
+#include "nastroyki.h"
 
-GyverDS18Single ds1(PIN_DS18B20_1);  // пин
-GyverDS18Single ds2(PIN_DS18B20_2);  // пин
+
+
 
 static uint16_t RED_PWM, GREEN_PWM, BLUE_PWM;  // Значения компонентов Red, Green, Blue (0–4095)
 static bool t6_rightDay = 0;
@@ -53,6 +54,9 @@ void init_pins() {
     /////     ВРЕМЕННО      ///////         УДАЛИТЬ !!!!!!!!!!!
     pinMode(GND_RGB_LENTA, OUTPUT);
     digitalWrite(GND_RGB_LENTA, 0);
+
+      dht1.begin(); // датчик dht инициализируем 
+
 }  // init_pins()
 //
 //
@@ -82,31 +86,7 @@ void read_t1_from_db() {
 //
 //
 
-void getds18() {
-    if (ds1.ready()) {         // измерения готовы по таймеру
-        if (ds1.readTemp()) {  // если чтение успешно
-            Serial.print("temp1: ");
-            Serial.println(ds1.getTemp());
-        } else {
-            Serial.println("error");
-        }
 
-        ds1.requestTemp();  // запрос следующего измерения
-    }
-    if (ds2.ready()) {         // измерения готовы по таймеру
-        if (ds2.readTemp()) {  // если чтение успешно
-            Serial.print("temp2: ");
-            Serial.println(ds2.getTemp());
-        } else {
-            Serial.println("error");
-        }
-
-        ds2.requestTemp();  // запрос следующего измерения
-    }
-}  // getds18()
-//
-//
-//
 
 void userSixTimers() {
     // таймер 1 ===

@@ -23,12 +23,13 @@
 // #include "driver/temp_sensor.h"
 #include "data.h"  // тут лежит структура data по кошерному
 #include "nastroyki.h"
+#include "sensors.h"
 #include "settings.h"
 #include "userTimers.h"
 
 // обявление фкнций для их видимости из вкладок.
 
-Timer each5Sec(5000);    // таймер раз в минуту
+Timer each10Sec(10000);  // таймер раз в 10 сек
 Timer each5min(300000);  // таймер раз в 5 мин
 Timer eachSec(1000);     // таймер раз в сек
 
@@ -125,6 +126,9 @@ void setup() {
     db.init(kk::aquaDoz1_8time, 76000ul);
     db.init(kk::aquaDoze1_dozeTime, 59);
 
+    db.init(kk::dht1name, "dht1 name");
+    
+
     db.init(kk::btnName, "имечко кнопоньки");
     db.init(kk::btnColor, 0xff00aa);
     db.dump(Serial);
@@ -177,7 +181,7 @@ void loop() {
     NTP.tick();
     indikator.tick();  // in loop
 
-    if (each5Sec.ready())  // раз в 5 сек
+    if (each10Sec.ready())  // раз в 5 сек
     {
         // поддержка NTP
         // делаем тут, а не в лупе,
@@ -190,7 +194,11 @@ void loop() {
         } else
             Serial.print("\n\n\tNTP not reached\n\n");
 
-    }  // each60Sec
+        // sensorsProbe(); // опросим датчики
+        // void getds18();
+        getdht();
+
+    }  // each10Sec
 
     if (eachSec.ready()) {  // раз в сек
 
@@ -199,9 +207,9 @@ void loop() {
         //     initially--;
         //     data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
         // }
-        data.secondsNow++;     // инкермент реалтайм
-        data.secondsUptime++;  // инкермент аптайм
-        if (data.secondsUptime == 86399){ // инкремент дней аптайма
+        data.secondsNow++;                  // инкермент реалтайм
+        data.secondsUptime++;               // инкермент аптайм
+        if (data.secondsUptime == 86399) {  // инкремент дней аптайма
             data.secondsUptime = 0;
             data.uptime_Days++;
         }

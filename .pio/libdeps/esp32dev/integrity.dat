@@ -1,5 +1,7 @@
+gyverlibs/Settings@^1.1.10
+adafruit/Adafruit Unified Sensor@^1.1.14
 gyverlibs/GyverDS18@^1.1.2
 gyverlibs/GyverNTP@^2.1.2
-gyverlibs/GyverDB@^1.1.8
-gyverlibs/Settings@^1.1.10
 gyverlibs/WiFiConnector@^1.0.4
+adafruit/DHT sensor library@^1.4.6
+gyverlibs/GyverDB@^1.1.8

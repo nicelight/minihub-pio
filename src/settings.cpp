@@ -25,7 +25,7 @@ static const char *const WEEKdays[] = {
     "Четверг",
     "Пятница",
     "Суббота",
-    "Воскресенье. Отдыхаем!"};
+    "Воскресенье"};
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
@@ -58,6 +58,8 @@ void update(sets::Updater &upd) {
     // upd.update("t1f_led"_h, data.t1isWorks);
     upd.update("aquaDoz1_led"_h, data.relFerti_on);
     upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
+
+    upd.update(kk::floattemp1, data.floattdht1);
 
     upd.update("lbl1"_h, curDataTime.weekDay + String(" день недели"));
     upd.update("lbl2"_h, millis());
@@ -196,15 +198,28 @@ void build(sets::Builder &b) {
     {
         sets::Group g(b, "Nicelight");
         if (NTP.synced()) {
-            // b.DateTime(kk::datime, "Сегодня ");
-            b.Date(kk::datime, " ");  // текущая дата
+            {
+                sets::Row g(b);
+                // sets::Row g(b, "Row");
+                // b.DateTime(kk::datime, "Сегодня ");
+                b.Label(kk::dayofweek, "Сегодня");    // текущая дата
+                b.Date(kk::datime, " ");  // текущая дата
+            }
+        }//NTP.synced()
+
+        {
+            sets::Row g(b);
+            // sets::Row g(b, "Row");
+            b.Label(kk::uptimeDays, "Аптайм");
+            b.Time(kk::secondsUptime, " ");
         }
-        b.Label(kk::dayofweek, "Сегодня");  // текущая дата
-        b.Label(kk::uptimeDays, "Аптайм");
-        b.Time(kk::secondsUptime, " ");
+
         b.Time(kk::secondsNow, "Времечко");
     }
+
     /* суточные таймеры */
+    // b.LabelFloat(kk::floattemp1, "dht1", 1);
+    b.LabelFloat(kk::floattemp1, db[kk::dht1name], data.floattdht1, 1, sets::Colors::Blue);  // за окном
     {
         sets::Group g(b, "Суточные таймеры");
         // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
@@ -454,6 +469,7 @@ void build(sets::Builder &b) {
                 b.Input(kk::t4Discr_name, "Имя Реле4:");
                 b.Input(kk::t5Discr_name, "Имя Реле5:");
                 b.Input(kk::t6Discr_name, "Имя Реле6:");
+                b.Input(kk::dht1name, "Имя dht22:");
             }
             {
                 sets::Menu g(b, "Расширенные");

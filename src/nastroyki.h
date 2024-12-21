@@ -36,6 +36,8 @@
 #define PIN_DS18B20_1 4
 #define PIN_DS18B20_2 16
 
+#define DHT1PIN 4
+#define DHT1TYPE DHT22
 
 
 #define PRIRODNIYSVET_BELIY
