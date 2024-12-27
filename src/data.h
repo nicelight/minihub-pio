@@ -28,6 +28,27 @@ struct Data  // обьявляем класс структуры
     byte uptime_Days = 0;
     // uint32_t secondsUptime = 86390;
     // byte uptime_Days = 1;
+
+    int16_t hdht1 = -80; // темп, влажность первого DHT22 
+    int16_t tdht1 = -80;
+    float floattdht1 = -80.0;
+    bool dht1TempRele_enbl = 0; 
+    bool dht1Rel_on = 0;
+
+    int16_t hdht2 = -80; // темп, влажность первого DHT22 
+    int16_t tdht2 = -80;
+    float floattdht2 = -80.0;
+    bool dht2HumRele_enbl = 0;
+    bool dht2Rel_on = 0;
+
+    float floattDS1 = -80.0; // температура первого DS18B20    
+    bool DS1Rele_enbl = 0;
+    bool DS1Rel_on = 0;
+
+    float floattDS2 = -80.0; // температура второго DS18B20
+    bool DS2Rele_enbl = 0; 
+    bool DS2Rel_on = 0;   
+
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;
     bool rel1_on = 0;
@@ -65,10 +86,6 @@ struct Data  // обьявляем класс структуры
     bool relFerti_on = 0;
     uint32_t relefertiSec = 0;
     int32_t untilNextDoze = 86340;  // через сколько следующее включение
-
-    int16_t hdht1 = -80; // темп, влажность первого DHT22 
-    int16_t tdht1 = -80;
-    float floattdht1 = -80.0;
      
     //  из примеров Гайвера
     int number = 123456;

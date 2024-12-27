@@ -33,10 +33,11 @@
 
 
 
-#define PIN_DS18B20_1 4
-#define PIN_DS18B20_2 16
+#define PIN_DS18B20 13
+#define PIN_DS18B20_2 30
 
 #define DHT1PIN 4
+#define DHT2PIN 16
 #define DHT1TYPE DHT22
 
 

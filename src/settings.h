@@ -5,7 +5,6 @@
 #include <GyverNTP.h>
 #include <SettingsGyver.h>
 
-
 // надо бы исправить DB_KEYS на нормальный enum чтобы конвертить можно было
 
 // enum keys : size_t {
@@ -22,7 +21,6 @@
 //     mykey,
 // );
 
-
 DB_KEYS(  // ключи по которым идет привязка к базе и к виджетам в web
     kk,
     wifi_ssid,
@@ -33,6 +31,36 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     secondsUptime,
     dayofweek,
     uptimeDays,
+
+    dht1name,
+    floattempdht1,
+    humdht1,
+    dht1TempRele_enabled,
+    dht1TempRele_startTemp,
+    dht1TempRele_TempThreshold,
+    dht1Rele_led,
+
+    dht2name,
+    floattempdht2,
+    humdht2,
+    dht2HumRele_enabled,
+    dht2HumRele_startHum,
+    dht2HumRele_HumThreshold,
+    dht2Rele_led,
+
+    DS1name,
+    floattempDS1,
+    DS1Rele_enabled,
+    DS1Rele_startTemp,
+    DS1Rele_TempThreshold,
+    DS1Rele_led,
+
+    DS2name,
+    floattempDS2,
+    DS2Rele_enabled,
+    DS2Rele_startTemp,
+    DS2Rele_TempThreshold,
+    DS2Rele_led,
 
     t1Discr_name,
     t1Discr_led,
@@ -106,10 +134,8 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
     aquaDoz1_btn_accept,
     aquaDoz1_makeDoze,
 
-    dht1name,
-    floattemp1,
     logUpdate,
-    testlabel, 
+    testlabel,
 
     btnflex,
     btnName,

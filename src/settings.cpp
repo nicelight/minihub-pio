@@ -14,8 +14,8 @@
 
 GyverDBFile db(&LittleFS, "/nicelight.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Горошек для любимой", &db);  // указывается заголовок меню, подключается база данных
-Datime curDataTime(NTP); //NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер 
-static bool notice_f;  // флаг на отправку уведомления о подключении к wifi
+Datime curDataTime(NTP);                         // NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер
+static bool notice_f;                            // флаг на отправку уведомления о подключении к wifi
 
 static const char *const WEEKdays[] = {
     "как будто бы вчера",
@@ -33,16 +33,15 @@ sets::Logger logger(150);
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
 
-
     upd.update(kk::secondsNow, data.secondsNow);
     upd.update(kk::secondsUptime, data.secondsUptime);
 
-    // upd.update(kk::datime, String(curDataTime)); // старое 
-    upd.update(kk::datime, NTP.dateToString()); 
+    // upd.update(kk::datime, String(curDataTime)); // старое
+    upd.update(kk::datime, NTP.dateToString());
     // upd.update(kk::testlabel,  NTP.dateToString()); //https://github.com/GyverLibs/Stamp
 
     if (!data.uptime_Days) {
-        upd.update(kk::uptimeDays, (String)("0 дней"));  // не работает, если писать выне ша пару строк
+        upd.update(kk::uptimeDays, (String)("0 дней"));
     } else if (data.uptime_Days == 1)
         upd.update(kk::uptimeDays, (String)("1 день"));
     else if (data.uptime_Days < 5)
@@ -60,12 +59,14 @@ void update(sets::Updater &upd) {
     upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
 
-
     // upd.update("t1f_led"_h, data.t1isWorks);
     upd.update("aquaDoz1_led"_h, data.relFerti_on);
     upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
-    upd.update(kk::floattemp1, data.floattdht1);
+    upd.update(kk::floattempdht1, data.floattdht1);
+    upd.update(kk::humdht1, data.hdht1);
+    upd.update(kk::floattempdht2, data.floattdht2);
+    upd.update(kk::humdht2, data.hdht2);
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -212,7 +213,7 @@ void build(sets::Builder &b) {
                 // sets::Row g(b, "Row");
                 // b.DateTime(kk::datime, "Сегодня ");
                 b.Label(kk::dayofweek, "Сегодня");  // текущая дата
-                b.Label(kk::datime, " ");            // текущая дата
+                b.Label(kk::datime, " ");           // текущая дата
             }
         }  // NTP.synced()
 
@@ -227,10 +228,93 @@ void build(sets::Builder &b) {
         // b.Label(kk::secondsNow, "Времечко");
     }
 
-    /* суточные таймеры */
-    // b.LabelFloat(kk::floattemp1, "dht1", 1);
-    b.LabelFloat(kk::floattemp1, db[kk::dht1name], data.floattdht1, 1, sets::Colors::Blue);  // за окном
     {
+        sets::Group g(b, "Воздух");
+        {
+            sets::Row g(b);
+            // b.LabelFloat(kk::floattemp1, "dht1", 1);
+            b.LabelFloat(kk::floattempdht1, db[kk::dht1name], data.floattdht1, 1, 0x3da7f2);  // DHT22 темп 1
+            b.Label("°С");
+        }
+        {
+            sets::Row g(b);
+            // b.LabelNum(kk::humdht1, "Влажность", data.hdht1, sets::Colors::Aqua);  // влажность 1
+            b.LabelNum(kk::humdht1, "Влажность", data.hdht1, 0x2680bf);  // влажность 1
+            // b.Label("%", "");
+            b.Label("%");
+        }
+        if (b.Switch(kk::dht1TempRele_enabled, "Охлаждение", nullptr, 0x3da7f2)) {  // Реле 1
+            data.dht1TempRele_enbl = db[kk::dht1TempRele_enabled];
+            // userSixTimers();
+            b.reload();
+        }
+        if (data.dht1TempRele_enbl) {
+            // if (db[kk::t1Discr_enabled].toBool()) {
+            b.LED(kk::dht1Rele_led, "Cтатус >>", data.dht1Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+            b.Number(kk::dht1TempRele_startTemp, "Включается при превышении, °C");
+            b.Select(kk::dht1TempRele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;2 °C");
+        }
+        b.Label(" ");
+        {
+            sets::Row g(b);
+            b.LabelFloat(kk::floattempdht2, db[kk::dht2name], data.floattdht2, 1, 0xec9736);  // DHT22 темп 2
+            b.Label("°С");
+        }
+        {
+            sets::Row g(b);
+            b.LabelNum(kk::humdht2, "Влажность", data.hdht2, 0xd17e1f);  // Влажность 2
+            b.Label("%");
+        }
+        if (b.Switch(kk::dht2HumRele_enabled, "Увлажнение", nullptr, 0xd17e1f)) {  // Реле 1
+            data.dht2HumRele_enbl = db[kk::dht2HumRele_enabled];
+            // userSixTimers();
+            b.reload();
+        }
+        if (data.dht2HumRele_enbl) {
+            b.LED(kk::dht2Rele_led, "Cтатус >>", data.dht2Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
+            b.Number(kk::dht2HumRele_startHum, "Включается, если ниже");
+            b.Select(kk::dht2HumRele_HumThreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
+        }
+    }  //"Воздух"
+
+    {
+        sets::Group g(b, "Вода");
+        {
+            sets::Row g(b);
+            // b.LabelFloat(kk::floattemp1, "dht1", 1);
+            b.LabelFloat(kk::floattempDS1, db[kk::DS1name], data.floattDS1, 1, 0x3da7f2);  // DHT22 темп 1
+            b.Label("°С");
+        }
+        if (b.Switch(kk::DS1Rele_enabled, "Охлаждение", nullptr, 0x3da7f2)) {  // Реле 1
+            data.DS1Rele_enbl = db[kk::DS1Rele_enabled];
+            // userSixTimers();
+            b.reload();
+        }
+        if (data.DS1Rele_enbl) {
+            b.LED(kk::DS1Rele_led, "Cтатус >>", data.DS1Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+            b.Number(kk::DS1Rele_startTemp, "Включается при превышении, °C");
+            b.Select(kk::DS1Rele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;3 °C");
+        }
+        b.Label(" ");
+        {
+            sets::Row g(b);
+            // b.LabelFloat(kk::floattemp1, "dht1", 1);
+            b.LabelFloat(kk::floattempDS2, db[kk::DS2name], data.floattDS2, 1, 0x3da7f2);  // DHT22 темп 1
+            b.Label("°С");
+        }
+        if (b.Switch(kk::DS2Rele_enabled, "Нагрев", nullptr, 0x3da7f2)) {  // Реле 1
+            data.DS2Rele_enbl = db[kk::DS2Rele_enabled];
+            // userSixTimers();
+            b.reload();
+        }
+        if (data.DS2Rele_enbl) {
+            b.LED(kk::DS2Rele_led, "Cтатус >>", data.DS2Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+            b.Number(kk::DS2Rele_startTemp, "Включается при превышении, °C");
+            b.Select(kk::DS2Rele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;3 °C");
+        }
+    }  //"Вода"
+
+    { /* суточные таймеры */
         sets::Group g(b, "Суточные таймеры");
         // if (b.Switch(kk::t1Discr_enabled, " Реле света 1"))
         if (b.Switch(kk::t1Discr_enabled, db[kk::t1Discr_name], nullptr, sets::Colors::Yellow)) {  // Реле 1
@@ -479,7 +563,8 @@ void build(sets::Builder &b) {
                 b.Input(kk::t4Discr_name, "Имя Реле4:");
                 b.Input(kk::t5Discr_name, "Имя Реле5:");
                 b.Input(kk::t6Discr_name, "Имя Реле6:");
-                b.Input(kk::dht1name, "Имя dht22:");
+                b.Input(kk::dht1name, "dht22 1:");
+                b.Input(kk::dht2name, "dht22 2:");
             }
             {
                 sets::Menu g(b, "Расширенные");

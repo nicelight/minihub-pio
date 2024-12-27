@@ -39,7 +39,7 @@ int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
 byte initially = 5;  // первых 10 секунд приписываем время в переменную
-
+bool firstSlowSensor = 1; // опрос датчиков по очереди 
 void setup() {
     each5min.rst();
     init_pins();
@@ -66,6 +66,28 @@ void setup() {
     db.init(kk::wifi_ssid, WIFI);
     db.init(kk::wifi_pass, WIFIPASS);
     db.init(kk::ntp_gmt, 5);
+
+    db.init(kk::dht1name, "Имя первого dht22");
+    db.init(kk::dht1TempRele_enabled, (uint8_t)0);
+    db.init(kk::dht1TempRele_startTemp, (uint8_t)26);
+    db.init(kk::dht1TempRele_TempThreshold, (uint8_t)1);
+
+    db.init(kk::dht2name, "Имя второго dht22");
+    db.init(kk::dht2HumRele_enabled, (uint8_t)0);
+    db.init(kk::dht2HumRele_startHum, (uint8_t)30);
+    db.init(kk::dht2HumRele_HumThreshold, (uint8_t)1);
+
+    db.init(kk::DS1name, "Имя первого DS18B20");
+    db.init(kk::DS1Rele_enabled, (uint8_t)0);
+    db.init(kk::DS1Rele_startTemp, (uint8_t)26);
+    db.init(kk::DS1Rele_TempThreshold, (uint8_t)1);
+
+    db.init(kk::DS2name, "Имя второго DS18B20");
+    db.init(kk::DS2Rele_enabled, (uint8_t)0);
+    db.init(kk::DS2Rele_startTemp, (uint8_t)26);
+    db.init(kk::DS2Rele_TempThreshold, (uint8_t)1);
+
+
     db.init(kk::t1Discr_name, "Реле 1");
     db.init(kk::t1Discr_enabled, 0);
     db.init(kk::t1Discr_startTime, 21600ul);
@@ -126,8 +148,6 @@ void setup() {
     db.init(kk::aquaDoz1_8time, 76000ul);
     db.init(kk::aquaDoze1_dozeTime, 59);
 
-    db.init(kk::dht1name, "dht1 name");
-    
 
     db.init(kk::btnName, "имечко кнопоньки");
     db.init(kk::btnColor, 0xff00aa);
@@ -172,7 +192,9 @@ void setup() {
     });
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
-
+//  getdht1(); //опрос медленных датчиков
+//  delay(1);
+//   getdht2();
 }  // setup
 
 void loop() {
@@ -196,8 +218,14 @@ void loop() {
 
         // sensorsProbe(); // опросим датчики
         // void getds18();
-        getdht();
+        if (firstSlowSensor) {
+            firstSlowSensor = 0;
+            getdht1();
 
+        } else {
+            firstSlowSensor = 1;
+            getdht2();
+        }
     }  // each10Sec
 
     if (eachSec.ready()) {  // раз в сек
@@ -216,7 +244,8 @@ void loop() {
         userSixTimers();
         userNatureTimer();
         userFertiTimer();
-;    }
+        ;
+    }
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");
