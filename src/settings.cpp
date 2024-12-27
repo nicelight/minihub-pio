@@ -67,6 +67,8 @@ void update(sets::Updater &upd) {
     upd.update(kk::humdht1, data.hdht1);
     upd.update(kk::floattempdht2, data.floattdht2);
     upd.update(kk::humdht2, data.hdht2);
+    upd.update(kk::floattempDS1, data.floattDS1);
+    upd.update(kk::floattempDS2, data.floattDS2);
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -86,13 +88,11 @@ void build(sets::Builder &b) {
         sets::Group g(b, "Логи");
 
         b.Log(logger);
-        if (b.Button(kk::logUpdate, "Обновить лог", sets::Colors::Yellow)) {
+        if (b.Button(kk::logUpdate, "Обновить лог", 0x2f7d34)) {
             logger.print(millis() >> 10);
             logger.print(" ");
-            logger.print(" curDataTime.weekDay:");
+            logger.print("день недели:");
             logger.println(curDataTime.weekDay);
-            logger.println("\tWEEKdays[curDataTime.weekDay]):");
-            logger.println(WEEKdays[curDataTime.weekDay]);
             b.reload();
         }
     }  // g(b, "Логи");
@@ -309,7 +309,7 @@ void build(sets::Builder &b) {
         }
         if (data.DS2Rele_enbl) {
             b.LED(kk::DS2Rele_led, "Cтатус >>", data.DS2Rel_on, sets::Colors::Gray, sets::Colors::Blue);
-            b.Number(kk::DS2Rele_startTemp, "Включается при превышении, °C");
+            b.Number(kk::DS2Rele_startTemp, "Включается, если ниже °C");
             b.Select(kk::DS2Rele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;3 °C");
         }
     }  //"Вода"

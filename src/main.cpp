@@ -217,15 +217,19 @@ void loop() {
             Serial.print("\n\n\tNTP not reached\n\n");
 
         // sensorsProbe(); // опросим датчики
-        // void getds18();
-        if (firstSlowSensor) {
-            firstSlowSensor = 0;
+        void getds18();
             getdht1();
-
-        } else {
-            firstSlowSensor = 1;
+            delay(2);
             getdht2();
-        }
+
+        // if (firstSlowSensor) {
+        //     firstSlowSensor = 0;
+        //     getdht1();
+
+        // } else {
+        //     firstSlowSensor = 1;
+        //     getdht2();
+        // }
     }  // each10Sec
 
     if (eachSec.ready()) {  // раз в сек
