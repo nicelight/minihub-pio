@@ -14,7 +14,7 @@
 
 GyverDBFile db(&LittleFS, "/nicelight.db");      // база данных для хранения настроек будет автоматически записываться в файл при изменениях
 SettingsGyver sett("Горошек для любимой", &db);  // указывается заголовок меню, подключается база данных
-Datime curDataTime(NTP);
+Datime curDataTime(NTP); //NTP это объект типа GyverNTPClient, наследует stampticker (С) Гайвер 
 static bool notice_f;  // флаг на отправку уведомления о подключении к wifi
 
 static const char *const WEEKdays[] = {
@@ -33,14 +33,13 @@ sets::Logger logger(150);
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
 
-    // upd.update(kk::testlabel, "УРА");  //тестовый лейбл 
 
     upd.update(kk::secondsNow, data.secondsNow);
-    // upd.update(kk::testlabel, "чебуреки");  //тестовый лейбл 
     upd.update(kk::secondsUptime, data.secondsUptime);
-    // upd.update(kk::testlabel, "тут еще работает");  //тестовый лейбл 
-    upd.update(kk::datime, String(curDataTime));
-    // upd.update(kk::testlabel, (String)(curDataTime));  //тестовый тут НЕ работает
+
+    // upd.update(kk::datime, String(curDataTime)); // старое 
+    upd.update(kk::datime, NTP.dateToString()); 
+    // upd.update(kk::testlabel,  NTP.dateToString()); //https://github.com/GyverLibs/Stamp
 
     if (!data.uptime_Days) {
         upd.update(kk::uptimeDays, (String)("0 дней"));  // не работает, если писать выне ша пару строк
@@ -202,7 +201,7 @@ void build(sets::Builder &b) {
 
     }  //  switch (b.build.id)
 
-    // b.Label(kk::testlabel, "тестовый лейбл");
+    b.Label(kk::testlabel, "тестовый лейбл");
 
     // WEB интерфейс ВЕБ морда формируется здесь
     {
@@ -213,7 +212,7 @@ void build(sets::Builder &b) {
                 // sets::Row g(b, "Row");
                 // b.DateTime(kk::datime, "Сегодня ");
                 b.Label(kk::dayofweek, "Сегодня");  // текущая дата
-                b.Date(kk::datime, " ");            // текущая дата
+                b.Label(kk::datime, " ");            // текущая дата
             }
         }  // NTP.synced()
 
