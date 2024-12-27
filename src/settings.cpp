@@ -224,6 +224,7 @@ void build(sets::Builder &b) {
         }
 
         b.Time(kk::secondsNow, "Времечко");
+        // b.Label(kk::secondsNow, "Времечко");
     }
 
     /* суточные таймеры */
