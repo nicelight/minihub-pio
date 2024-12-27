@@ -108,6 +108,8 @@ DB_KEYS(  // ключи по которым идет привязка к баз�
 
     dht1name,
     floattemp1,
+    logUpdate,
+    testlabel, 
 
     btnflex,
     btnName,

@@ -170,6 +170,11 @@ class Text : public Printable {
     const char* str() const {
         return valid() ? _str : "";
     }
+    
+    // Получить указатель на строку. Всегда вернёт указатель, отличный от nullptr!
+    const uint8_t* bytes() const {
+        return (const uint8_t*)(valid() ? _str : "");
+    }
 
     // указатель на конец строки
     const char* end() const {
@@ -614,7 +619,7 @@ class Text : public Printable {
     char charAt(int idx) const {
         if (idx < 0) idx += length();
         if (idx < 0) return 0;
-        return (valid() && idx < _len) ? _charAt(idx) : 0;
+        return (valid() && (uint16_t)idx < _len) ? _charAt(idx) : 0;
     }
 
     // Получить символ по индексу. Допускаются отрицательные

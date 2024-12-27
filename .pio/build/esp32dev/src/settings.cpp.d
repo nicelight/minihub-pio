@@ -83,6 +83,7 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/log/include/esp_log_internal.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/uart_types.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/variants/doitESP32devkitV1/pins_arduino.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
@@ -121,6 +122,7 @@
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPAddress.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/HWCDC.h \
+ C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/USBCDC.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/cores/esp32/Esp.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/spi_flash/include/esp_partition.h \
  C:/Users/Acer/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/spi_flash/include/esp_flash.h \
@@ -140,6 +142,8 @@
  .pio/libdeps/esp32dev/GTL/src/array/array_uniq.h \
  .pio/libdeps/esp32dev/GTL/src/fifo/fifo_ext.h \
  .pio/libdeps/esp32dev/GTL/src/fifo/fifo_static.h \
+ .pio/libdeps/esp32dev/GTL/src/lbuf/lbuf_ext.h \
+ .pio/libdeps/esp32dev/GTL/src/lbuf/lbuf_static.h \
  .pio/libdeps/esp32dev/GTL/src/list/linked_list.h \
  .pio/libdeps/esp32dev/GTL/src/list/list_node.h \
  .pio/libdeps/esp32dev/GTL/src/ptr/ptr_shared.h \
@@ -295,16 +299,9 @@
  .pio/libdeps/esp32dev/Settings/src/core/builder.h \
  .pio/libdeps/esp32dev/Settings/src/core/AnyPtr.h \
  .pio/libdeps/esp32dev/Settings/src/core/packet.h \
- .pio/libdeps/esp32dev/GSON/src/GSON.h \
- .pio/libdeps/esp32dev/GSON/src/utils/bson.h \
- .pio/libdeps/esp32dev/GSON/src/utils/parser.h \
- .pio/libdeps/esp32dev/GSON/src/utils/entry.h \
- .pio/libdeps/esp32dev/GSON/src/utils/entry_stack.h \
- .pio/libdeps/esp32dev/GSON/src/utils/entry_t.h \
- .pio/libdeps/esp32dev/GSON/src/utils/types.h \
- .pio/libdeps/esp32dev/GSON/src/utils/parser_stream.h \
- .pio/libdeps/esp32dev/GSON/src/utils/string.h \
+ .pio/libdeps/esp32dev/BSON/BSON.h \
  .pio/libdeps/esp32dev/Settings/src/core/codes.h \
+ .pio/libdeps/esp32dev/Settings/src/core/logger.h \
  .pio/libdeps/esp32dev/Settings/src/core/build.h \
  .pio/libdeps/esp32dev/Settings/src/core/colors.h \
  .pio/libdeps/esp32dev/Settings/src/core/containers_class.h \

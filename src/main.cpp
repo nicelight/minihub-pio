@@ -216,7 +216,7 @@ void loop() {
         userSixTimers();
         userNatureTimer();
         userFertiTimer();
-    }
+;    }
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");

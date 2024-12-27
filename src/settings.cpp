@@ -27,27 +27,33 @@ static const char *const WEEKdays[] = {
     "Суббота",
     "Воскресенье"};
 // это апдейтер. Функция вызывается, когда вебморда запрашивает обновления
+
+sets::Logger logger(150);
+
 void update(sets::Updater &upd) {
     // отправляем свежие значения по имени (хэшу) виджета
 
-    upd.update(kk::datime, curDataTime);
-
-    // upd.update("weekday"_h, curDataTime.weekDay + String(" день недели"));
+    // upd.update(kk::testlabel, "УРА");  //тестовый лейбл 
 
     upd.update(kk::secondsNow, data.secondsNow);
+    // upd.update(kk::testlabel, "чебуреки");  //тестовый лейбл 
     upd.update(kk::secondsUptime, data.secondsUptime);
-    // upd.update("lbl1"_h, random(100));
+    // upd.update(kk::testlabel, "тут еще работает");  //тестовый лейбл 
+    upd.update(kk::datime, String(curDataTime));
+    // upd.update(kk::testlabel, (String)(curDataTime));  //тестовый тут НЕ работает
 
-    if (!data.uptime_Days)
-        upd.update(kk::uptimeDays, data.uptime_Days + String(" дней"));  // не работает, если писать выне ша пару строк
-    else if (data.uptime_Days == 1)
-        upd.update(kk::uptimeDays, data.uptime_Days + String(" день"));  // не работает, если писать выне ша пару строк
+    if (!data.uptime_Days) {
+        upd.update(kk::uptimeDays, (String)("0 дней"));  // не работает, если писать выне ша пару строк
+    } else if (data.uptime_Days == 1)
+        upd.update(kk::uptimeDays, (String)("1 день"));
     else if (data.uptime_Days < 5)
-        upd.update(kk::uptimeDays, data.uptime_Days + String(" дня"));  // не работает, если писать выне ша пару строк
+        upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дня")));
     else if (data.uptime_Days >= 5)
-        upd.update(kk::uptimeDays, data.uptime_Days + String(" дней"));  // не работает, если писать выне ша пару строк
+        upd.update(kk::uptimeDays, (String)(data.uptime_Days + String(" дней")));
+    // день недели выводим, оч красиво, Гайвер посоветовал
 
-    upd.update(kk::dayofweek, WEEKdays[curDataTime.weekDay]);  // день недели выводим, оч красиво, Гайвер посоветовал
+    upd.update(kk::dayofweek, (String)(WEEKdays[curDataTime.weekDay]));
+
     upd.update("t1Discr_led"_h, data.rel1_on);
     upd.update("t2Discr_led"_h, data.rel2_on);
     upd.update("t3Discr_led"_h, data.rel3_on);
@@ -55,13 +61,14 @@ void update(sets::Updater &upd) {
     upd.update("t5Discr_led"_h, data.rel5_on);
     upd.update("t6Discr_led"_h, data.rel6_on);
 
+
     // upd.update("t1f_led"_h, data.t1isWorks);
     upd.update("aquaDoz1_led"_h, data.relFerti_on);
     upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
     upd.update(kk::floattemp1, data.floattdht1);
 
-    upd.update("lbl1"_h, curDataTime.weekDay + String(" день недели"));
+    upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
     if (notice_f)  // уведомление при вводе wifi данных
     {
@@ -69,36 +76,37 @@ void update(sets::Updater &upd) {
         upd.notice("Если не ошибся с вводом, устройство подключится к  wifi сети, светодиод медленно замигает");
         //    upd.alert("Ошибка");
     }
-    // примечание: при ручных изменениях в базе данных отправлять новые значения не нужно!
-    // библиотека сделает это сама =)
 }  // update
+//
+//
+//
 
 void build(sets::Builder &b) {
-    /*
-      // можно узнать, было ли действие по виджету
-      if (b.build.isAction()) {
-        Serial.print("Set: 0x");
-        Serial.print(b.build.id, HEX);
-        Serial.print(" = ");
-        Serial.println(b.build.value);
-      }
-    */
+    {
+        sets::Group g(b, "Логи");
 
-    /*
-      // обработка действий от виджетов:
-      switch (b.build.id)
-      {
-      case "uintw"_h: // если ввели импут
-        Serial.print("input: ");
-        Serial.println(b.build.value);
-        break;
+        b.Log(logger);
+        if (b.Button(kk::logUpdate, "Обновить лог", sets::Colors::Yellow)) {
+            logger.print(millis() >> 10);
+            logger.print(" ");
+            logger.print(" curDataTime.weekDay:");
+            logger.println(curDataTime.weekDay);
+            logger.println("\tWEEKdays[curDataTime.weekDay]):");
+            logger.println(WEEKdays[curDataTime.weekDay]);
+            b.reload();
+        }
+    }  // g(b, "Логи");
 
-      case "intw"_h:
-        Serial.print("intw ");
-        Serial.println(b.build.value);
-        break;
-      }
-    */
+    // обработка действий от виджетов:
+    switch (b.build.id) {
+        // case kk::logUpdate:  // если ввели импут
+        //     // logger.println(b.build.id, HEX);
+        //     logger.print("старт таймера 1 в ");
+        //     logger.println(db[kk::t1Discr_startTime]);
+        //     logger.print(" curDataTime.weekDay:");
+        //     logger.println(curDataTime.weekDay);
+        //     break;
+    }
 
     // костыль на моментальное обновление индикаторных светодиодов
     switch (b.build.id) {
@@ -194,6 +202,8 @@ void build(sets::Builder &b) {
 
     }  //  switch (b.build.id)
 
+    // b.Label(kk::testlabel, "тестовый лейбл");
+
     // WEB интерфейс ВЕБ морда формируется здесь
     {
         sets::Group g(b, "Nicelight");
@@ -202,10 +212,10 @@ void build(sets::Builder &b) {
                 sets::Row g(b);
                 // sets::Row g(b, "Row");
                 // b.DateTime(kk::datime, "Сегодня ");
-                b.Label(kk::dayofweek, "Сегодня");    // текущая дата
-                b.Date(kk::datime, " ");  // текущая дата
+                b.Label(kk::dayofweek, "Сегодня");  // текущая дата
+                b.Date(kk::datime, " ");            // текущая дата
             }
-        }//NTP.synced()
+        }  // NTP.synced()
 
         {
             sets::Row g(b);
