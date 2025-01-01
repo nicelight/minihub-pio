@@ -38,8 +38,8 @@ bool gotWifi = 0;                          // если подключено бы
 int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
-byte initially = 5;  // первых 10 секунд приписываем время в переменную
-bool firstSlowSensor = 1; // опрос датчиков по очереди 
+byte initially = 5;        // первых 10 секунд приписываем время в переменную
+bool firstSlowSensor = 1;  // опрос датчиков по очереди
 void setup() {
     each5min.rst();
     init_pins();
@@ -86,7 +86,6 @@ void setup() {
     db.init(kk::DS2Rele_enabled, (uint8_t)0);
     db.init(kk::DS2Rele_startTemp, (uint8_t)26);
     db.init(kk::DS2Rele_TempThreshold, (uint8_t)1);
-
 
     db.init(kk::t1Discr_name, "Реле 1");
     db.init(kk::t1Discr_enabled, 0);
@@ -148,7 +147,6 @@ void setup() {
     db.init(kk::aquaDoz1_8time, 76000ul);
     db.init(kk::aquaDoze1_dozeTime, 59);
 
-
     db.init(kk::btnName, "имечко кнопоньки");
     db.init(kk::btnColor, 0xff00aa);
     db.dump(Serial);
@@ -164,6 +162,39 @@ void setup() {
     data.t5discr_enbl = db[kk::t5Discr_enabled];
     data.t6discr_enbl = db[kk::t6Discr_enabled];
     userSixTimers();
+    // пересчитываем температуру х10 чтобы не множиться в цикле
+    data.tdht1MaxX10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+    data.hdht2Min = db[kk::dht2HumRele_startHum].toInt();
+    //берем показания 
+    switch (db[kk::dht1TempRele_TempThreshold].toInt()) {
+        case 0:
+            data.dht1Treshold = 5;
+            break;
+        case 1:
+            data.dht1Treshold = 10;
+            break;
+        case 2:
+            data.dht1Treshold = 20;
+            break;
+        case 3:
+            data.dht1Treshold = 30;
+            break;
+    }
+    switch (db[kk::dht2HumRele_HumThreshold].toInt()) {
+        case 0:
+            data.dht2Treshold = 1;
+            break;
+        case 1:
+            data.dht2Treshold = 2;
+            break;
+        case 2:
+            data.dht2Treshold = 5;
+            break;
+        case 3:
+            data.dht2Treshold = 10;
+            break;
+    }
+    userDhtRelays();
 
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
@@ -192,9 +223,9 @@ void setup() {
     });
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
-//  getdht1(); //опрос медленных датчиков
-//  delay(1);
-//   getdht2();
+    //  getdht1(); //опрос медленных датчиков
+    //  delay(1);
+    //   getdht2();
 }  // setup
 
 void loop() {
@@ -217,10 +248,10 @@ void loop() {
             Serial.print("\n\n\tNTP not reached\n\n");
 
         // sensorsProbe(); // опросим датчики
-        void getds18();
-            getdht1();
-            delay(2);
-            getdht2();
+        getds18();
+        getdht1();
+        delay(2);
+        getdht2();
 
         // if (firstSlowSensor) {
         //     firstSlowSensor = 0;
@@ -248,8 +279,8 @@ void loop() {
         userSixTimers();
         userNatureTimer();
         userFertiTimer();
-        ;
     }
+    userDhtRelays();  // тут ничего медленного, можно часто вызывать
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");

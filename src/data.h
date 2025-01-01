@@ -30,16 +30,21 @@ struct Data  // обьявляем класс структуры
     // byte uptime_Days = 1;
 
     int16_t hdht1 = -80; // темп, влажность первого DHT22 
-    int16_t tdht1 = -80;
+    int16_t tdht1x10 = -80;
+    int16_t tdht1MaxX10 = 0;
+    int16_t dht1Treshold = 0;
     float floattdht1 = -80.0;
-    bool dht1TempRele_enbl = 0; 
-    bool dht1Rel_on = 0;
+    // bool dht1TempRele_enbl = 0; 
+    bool dht1Rel_on = false;
+    byte dht1State = 0; // автомат работы реле
 
     int16_t hdht2 = -80; // темп, влажность первого DHT22 
-    int16_t tdht2 = -80;
+    int16_t hdht2Min = 0;
+    int16_t dht2Treshold = 0;
     float floattdht2 = -80.0;
-    bool dht2HumRele_enbl = 0;
+    // bool dht2HumRele_enbl = 0;
     bool dht2Rel_on = 0;
+    byte dht2State = 0; // автомат работы реле
 
     float floattDS1 = -80.0; // температура первого DS18B20    
     bool DS1Rele_enbl = 0;

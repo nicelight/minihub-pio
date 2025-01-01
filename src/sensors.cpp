@@ -6,10 +6,10 @@
 #include "settings.h"
 
 GyverDS18Single ds1(PIN_DS18B20);    // пин
-GyverDS18Single ds2(PIN_DS18B20_2);  // пин
+GyverDS18Single ds2(PIN_DS18B20_2);  // пинDHT2PIN
 
 DHT dht1(DHT1PIN, DHT1TYPE);
-DHT dht2(DHT2PIN, DHT1TYPE);
+DHT dht2(DHT2PIN, DHT2TYPE);
 
 void getds18() {
     if (ds1.ready()) {         // измерения готовы по таймеру
@@ -49,11 +49,10 @@ void getdht1() {
     // float hic = dht1.computeHeatIndex(t, h, false);  // Compute heat index in Celsius (isFahreheit = false)
     if (isnan(h) || isnan(t)) {
         data.hdht1 = -80;
-        data.tdht1 = -80;
         data.floattdht1 = -80.0;
     } else {
         data.hdht1 = (int)h;
-        data.tdht1 = (int)t;
+        data.tdht1x10 = (int)(t * 10);
         data.floattdht1 = t;
     }
 }  // getdht()
@@ -61,14 +60,11 @@ void getdht1() {
 void getdht2() {
     float h = dht2.readHumidity();
     float t = dht2.readTemperature();
-    // float hic = dht1.computeHeatIndex(t, h, false);  // Compute heat index in Celsius (isFahreheit = false)
     if (isnan(h) || isnan(t)) {
         data.hdht2 = -80;
-        data.tdht2 = -80;
         data.floattdht2 = -80.0;
     } else {
         data.hdht2 = (int)h;
-        data.tdht2 = (int)t;
         data.floattdht2 = t;
     }
 }  // getdht()

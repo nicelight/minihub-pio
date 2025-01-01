@@ -12,6 +12,7 @@ extern byte releFertiProcess;
 void hueToRGB(uint8_t hue, uint16_t brightness);
 void init_pins();
 void read_t1_from_db();
+void userDhtRelays();
 void userNatureTimer();
 void userSixTimers();
 void userFertiTimer();

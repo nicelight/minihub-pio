@@ -3,12 +3,9 @@
 #include <Arduino.h>
 
 #include "data.h"
-#include "settings.h"
-#include "sensors.h"
 #include "nastroyki.h"
-
-
-
+#include "sensors.h"
+#include "settings.h"
 
 static uint16_t RED_PWM, GREEN_PWM, BLUE_PWM;  // Значения компонентов Red, Green, Blue (0–4095)
 static bool t6_rightDay = 0;
@@ -22,6 +19,11 @@ static byte curr_sunset_dim = 0;         // шаги яркости при за�
 byte releFertiProcess = 0;  // автомат подачи дозы удобрений
 
 void init_pins() {
+    pinMode(DHT1RELAY, OUTPUT);
+    digitalWrite(DHT1RELAY, OFF);
+    pinMode(DHT2RELAY, OUTPUT);
+    digitalWrite(DHT2RELAY, OFF);
+
     pinMode(RELE_1, OUTPUT);
     digitalWrite(RELE_1, OFF);
     delay(100);  // чтоб не перегружать блоки питания и контакты
@@ -51,11 +53,8 @@ void init_pins() {
     ledcAttachPin(GREEN_RGB_LENTA, GREEN_PWM_CHANNEL);  // Пин 2 к каналу 1
     ledcAttachPin(BLUE_RGB_LENTA, BLUE_PWM_CHANNEL);    // Пин 4 к каналу 2
 
-    /////     ВРЕМЕННО      ///////         УДАЛИТЬ !!!!!!!!!!!
-    pinMode(GND_RGB_LENTA, OUTPUT);
-    digitalWrite(GND_RGB_LENTA, 0);
-
-      dht1.begin(); // датчик dht инициализируем 
+    dht1.begin();  // датчик dht инициализируем
+    dht2.begin();  // датчик dht инициализируем
 
 }  // init_pins()
 //
@@ -86,7 +85,83 @@ void read_t1_from_db() {
 //
 //
 
+void userDhtRelays() {
+    // === термореле DHT1 для охлаждения воздуха
+    switch (data.dht1State) {
+        // инициализация
+        //  ползунок включен - отрабатываем
+        // выключен и включено реле - уйдем на выключение
+        case 0:
+            //            // if (data.dht1TempRele_enbl != 0) {
+            if (db[kk::dht1TempRele_enabled].toInt() != 0) {
+                data.dht1State = 5;
+            } else if (data.dht1Rel_on) {
+                data.dht1State = 20;  // выключим по перемещению ползунка в OFF
+            }
+            break;
+        case 5:  // ожидание превышения теспературы
+            if (data.tdht1x10 >= data.tdht1MaxX10) {
+                data.dht1State = 10;
+            }
+            break;
+        case 10:  // включаем охлаждение
+            digitalWrite(DHT1RELAY, ON);
+            data.dht1Rel_on = true;
+            data.dht1State = 15;
+            break;
+        case 15:  // ожидаем понижения температуры + трешхолд
+            if (data.tdht1x10 <= data.tdht1MaxX10 - data.dht1Treshold) {
+                digitalWrite(DHT1RELAY, OFF);
+                data.dht1State = 20;
+            }
+            break;
+        case 20:  // используется при переключении ползунка в морде
+            digitalWrite(DHT1RELAY, OFF);
+            data.dht1Rel_on = false;
+            data.dht1State = 0;
+            break;
+    }  // switch (dht1State)
+    //
 
+    // === термореле DHT2 для увлажнения воздуха
+    switch (data.dht2State) {
+        // инициализация
+        //  ползунок включен - отрабатываем
+        // выключен и включено реле - уйдем на выключение
+        case 0:
+            //            // if (data.dht1TempRele_enbl != 0) {
+            if (db[kk::dht2HumRele_enabled].toInt() != 0) {
+                data.dht2State = 5;
+            } else if (data.dht2Rel_on) {
+                data.dht2State = 20;  // выключим по перемещению ползунка в OFF
+            }
+            break;
+        case 5:  // ожидание понижения влажности
+            if (data.hdht2 <= data.hdht2Min) {
+                data.dht2State = 10;
+            }
+            break;
+        case 10:  // включаем охлаждение
+            digitalWrite(DHT2RELAY, ON);
+            data.dht2Rel_on = true;
+            data.dht2State = 15;
+            break;
+        case 15:  // ожидаем повышения влажности + трешхолд
+            if (data.hdht2 >= data.hdht2Min + data.dht2Treshold) {
+                digitalWrite(DHT2RELAY, OFF);
+                data.dht2State = 20;
+            }
+            break;
+        case 20:  // используется при переключении ползунка в морде
+            digitalWrite(DHT2RELAY, OFF);
+            data.dht2Rel_on = false;
+            data.dht2State = 0;
+            break;
+    }  // switch (dht2State)
+}  // userDhtRelays()
+//
+//
+//
 
 void userSixTimers() {
     // таймер 1 ===
@@ -600,14 +675,14 @@ void userFertiTimer() {
 
         untilNextDoze2 = db[kk::aquaDoz1_2time].toInt() - (int)data.secondsNow;
         if (!untilNextDoze2) releFertiProcess = 10;  // ON
-        else if (untilNextDoze2 > 0) {           // ищем минимальное время
+        else if (untilNextDoze2 > 0) {               // ищем минимальное время
             if (untilNextDoze2 < data.untilNextDoze)
                 data.untilNextDoze = untilNextDoze2;
         }
         if (db[kk::aquaDoz1_need3rd].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_3time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }
@@ -615,7 +690,7 @@ void userFertiTimer() {
         if (db[kk::aquaDoz1_need4th].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_4time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }
@@ -623,7 +698,7 @@ void userFertiTimer() {
         if (db[kk::aquaDoz1_need5th].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_5time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }
@@ -631,7 +706,7 @@ void userFertiTimer() {
         if (db[kk::aquaDoz1_need6th].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_6time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }
@@ -639,7 +714,7 @@ void userFertiTimer() {
         if (db[kk::aquaDoz1_need7th].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_7time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }
@@ -647,7 +722,7 @@ void userFertiTimer() {
         if (db[kk::aquaDoz1_need8th].toInt()) {
             untilNextDoze2 = db[kk::aquaDoz1_8time].toInt() - data.secondsNow;
             if (!untilNextDoze2) releFertiProcess = 10;  // ON
-            else if (untilNextDoze2 > 0) {           // ищем минимальное время
+            else if (untilNextDoze2 > 0) {               // ищем минимальное время
                 if (untilNextDoze2 < data.untilNextDoze)
                     data.untilNextDoze = untilNextDoze2;
             }

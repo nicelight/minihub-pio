@@ -5,54 +5,47 @@
 // можно ввести, подключившись к ESP AP c паролем 1234567890
 #define WIFI ""
 #define WIFIPASS ""
+
 #define INDIKATOR 2 // на каком пине индикаторный светодиод
-
-#define RELE_1 4
-#define RELE_2 16
-#define RELE_3 17
-#define RELE_4 5
-#define RELE_5 19
-#define RELE_6 18
-
-#define RELE_FERTILIZER 18
 
 // #define ON 0  // включение релюшек логическим нулем или единицей
 // #define OFF 1 //
 #define ON 1  // включение симмисторов лог. единицей
 #define OFF 0 //
 
+#define PIN_DS18B20 13
+#define PIN_DS18B20_2 30
+
+#define DHT1PIN 4
+#define DHT1TYPE DHT22
+#define DHT1RELAY 17 //32
+
+#define DHT2PIN 16
+#define DHT2TYPE DHT22
+#define DHT2RELAY 33
+
+#define RELE_1 5
+#define RELE_2 4
+#define RELE_3 15
+#define RELE_4 16
+#define RELE_5 18
+#define RELE_6 19
+
+#define RELE_FERTILIZER 23
+
 
 //для rgb ленты
 #define RED_RGB_LENTA 27
 #define GREEN_RGB_LENTA 26
 #define BLUE_RGB_LENTA 25
-#define GND_RGB_LENTA 33 // удалить. дает минус на управление RGB транзисторами ленты 
-#define RED_PWM_CHANNEL 0 
+
+#define RED_PWM_CHANNEL 0  // не менять
 #define GREEN_PWM_CHANNEL 1 
 #define BLUE_PWM_CHANNEL 2
 
 
 
-#define PIN_DS18B20 13
-#define PIN_DS18B20_2 30
-
-#define DHT1PIN 4
-#define DHT2PIN 16
-#define DHT1TYPE DHT22
-
-
-#define PRIRODNIYSVET_BELIY
-
-
-
-
-
-
-
-
-
-
-
+// для тестов 
 #ifndef RELE_1
 #define RELE_1 LED_BUILTIN
 #endif 
