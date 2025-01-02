@@ -71,7 +71,9 @@ void update(sets::Updater &upd) {
     upd.update(kk::dht2Rele_led, data.dht2Rel_on);
 
     upd.update(kk::floattempDS1, data.floattDS1);
+    upd.update(kk::DS1Rele_led, data.DS1Rel_on);
     upd.update(kk::floattempDS2, data.floattDS2);
+    upd.update(kk::DS2Rele_led, data.DS2Rel_on);
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -263,7 +265,57 @@ void build(sets::Builder &b) {
             userDhtRelays();
             b.reload();
             break;
+        case kk::DS1Rele_startTemp:
+            // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
+            data.tempMax_ds1x10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+            userDSRelays();
+            b.reload();
+            break;
 
+        case kk::DS1Rele_TempThreshold:
+            switch (db[kk::DS1Rele_TempThreshold].toInt()) {
+                case 0:
+                    data.temp_ds1Treshold = 2;
+                    break;
+                case 1:
+                    data.temp_ds1Treshold = 5;
+                    break;
+                case 2:
+                    data.temp_ds1Treshold = 10;
+                    break;
+                case 3:
+                    data.temp_ds1Treshold = 30;
+                    break;
+            }
+            userDSRelays();
+            b.reload();
+            break;
+
+        case kk::DS2Rele_startTemp:
+            // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
+            data.tempMin_ds2x10 = db[kk::DS2Rele_startTemp].toInt() * 10;
+            userDSRelays();
+            b.reload();
+            break;
+
+        case kk::DS2Rele_TempThreshold:
+            switch (db[kk::DS2Rele_TempThreshold].toInt()) {
+                case 0:
+                    data.temp_ds2Treshold = 2;
+                    break;
+                case 1:
+                    data.temp_ds2Treshold = 5;
+                    break;
+                case 2:
+                    data.temp_ds2Treshold = 10;
+                    break;
+                case 3:
+                    data.temp_ds2Treshold = 30;
+                    break;
+            }
+            userDSRelays();
+            b.reload();
+            break;
     }  //  switch (b.build.id)
 
     // b.Label(kk::testlabel, "тестовый лейбл");
@@ -315,7 +367,7 @@ void build(sets::Builder &b) {
             userDhtRelays();
             b.reload();
         }
-        if (db[kk::dht1TempRele_enabled] != 0) {
+        if (db[kk::dht1TempRele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
                 b.LED(kk::dht1Rele_led, "Cтатус >>", data.dht1Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
@@ -341,7 +393,7 @@ void build(sets::Builder &b) {
             userDhtRelays();
             b.reload();
         }
-        if (db[kk::dht2HumRele_enabled] != 0) {
+        if (db[kk::dht2HumRele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
                 b.LED(kk::dht2Rele_led, "Cтатус >>", data.dht2Rel_on, sets::Colors::Gray, sets::Colors::Blue);
@@ -351,21 +403,25 @@ void build(sets::Builder &b) {
             b.Select(kk::dht2HumRele_HumThreshold, "Порог отключения,", "1 %;2 %;5 %;10 %");
         }
     }  //"Воздух"
-    {
+    //
+    //
+
+    {  // "Вода"
         sets::Group g(b, "Вода");
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
-            b.LabelFloat(kk::floattempDS1, db[kk::DS1name], data.floattDS1, 1, 0x3da7f2);  // DHT22 темп 1
+            b.LabelFloat(kk::floattempDS1, db[kk::DS1name], data.floattDS1, 1, sets::Colors::Aqua);  // DHT22 темп 1
             b.Label("°С");
         }
-        if (b.Switch(kk::DS1Rele_enabled, "Охлаждение", nullptr, 0x3da7f2)) {  // Реле 1
-            data.DS1Rele_enbl = db[kk::DS1Rele_enabled];
-            // userSixTimers();
+        if (b.Switch(kk::DS1Rele_enabled, "Охлаждение", nullptr, sets::Colors::Aqua)) {  // Реле 1
+            // data.DS1Rele_enbl = db[kk::DS1Rele_enabled];
+            userDSRelays();
             b.reload();
         }
-        if (data.DS1Rele_enbl) {
-            b.LED(kk::DS1Rele_led, "Cтатус >>", data.DS1Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+        // if (data.DS1Rele_enbl) {
+        if (db[kk::DS1Rele_enabled].toInt() != 0) {
+            b.LED(kk::DS1Rele_led, "Cтатус >>", data.DS1Rel_on, sets::Colors::Gray, sets::Colors::Aqua);
             b.Number(kk::DS1Rele_startTemp, "Включается при превышении, °C");
             b.Select(kk::DS1Rele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;3 °C");
         }
@@ -373,16 +429,17 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
-            b.LabelFloat(kk::floattempDS2, db[kk::DS2name], data.floattDS2, 1, 0x3da7f2);  // DHT22 темп 1
+            b.LabelFloat(kk::floattempDS2, db[kk::DS2name], data.floattDS2, 1, sets::Colors::Aqua);  // DHT22 темп 1
             b.Label("°С");
         }
-        if (b.Switch(kk::DS2Rele_enabled, "Нагрев", nullptr, 0x3da7f2)) {  // Реле 1
-            data.DS2Rele_enbl = db[kk::DS2Rele_enabled];
-            // userSixTimers();
+        if (b.Switch(kk::DS2Rele_enabled, "Нагрев", nullptr, sets::Colors::Aqua)) {  // Реле 1
+            // data.DS2Rele_enbl = db[kk::DS2Rele_enabled];
+            userDSRelays();
             b.reload();
         }
-        if (data.DS2Rele_enbl) {
-            b.LED(kk::DS2Rele_led, "Cтатус >>", data.DS2Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+        // if (data.DS2Rele_enbl) {
+        if (db[kk::DS2Rele_enabled].toInt() != 0) {
+            b.LED(kk::DS2Rele_led, "Cтатус >>", data.DS2Rel_on, sets::Colors::Gray, sets::Colors::Aqua);
             b.Number(kk::DS2Rele_startTemp, "Включается, если ниже °C");
             b.Select(kk::DS2Rele_TempThreshold, "Порог отключения", "0,2 °C;0,5 °C;1 °C;3 °C");
         }
@@ -639,6 +696,8 @@ void build(sets::Builder &b) {
                 b.Input(kk::t6Discr_name, "Имя Реле6:");
                 b.Input(kk::dht1name, "dht22 1:");
                 b.Input(kk::dht2name, "dht22 2:");
+                b.Input(kk::DS1name, "DS18B20 1:");
+                b.Input(kk::DS2name, "DS18B20 2:");
             }
             {
                 sets::Menu g(b, "Расширенные");

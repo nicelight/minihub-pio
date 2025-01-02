@@ -5,30 +5,36 @@
 #include "nastroyki.h"
 #include "settings.h"
 
-GyverDS18Single ds1(PIN_DS18B20);    // пин
-GyverDS18Single ds2(PIN_DS18B20_2);  // пинDHT2PIN
+GyverDS18Single ds1(DS18B20_1);  // пин
+GyverDS18Single ds2(DS18B20_2);  // пинDHT2PIN
 
 DHT dht1(DHT1PIN, DHT1TYPE);
 DHT dht2(DHT2PIN, DHT2TYPE);
 
-void getds18() {
+void get1ds18() {
     if (ds1.ready()) {         // измерения готовы по таймеру
         if (ds1.readTemp()) {  // если чтение успешно
             Serial.print("temp1: ");
             // Serial.println(ds1.getTemp());
             data.floattDS1 = ds1.getTemp();
+            data.temp_ds1x10 = (int)(data.floattDS1 * 10);
         } else {
             // Serial.println("error");
-            data.floattDS1 = random(41, 44);
+            data.floattDS1 = -80.0;
         }
 
         ds1.requestTemp();  // запрос следующего измерения
     }
+}  // get1ds18()
+//
+
+void get2ds18() {
     if (ds2.ready()) {         // измерения готовы по таймеру
         if (ds2.readTemp()) {  // если чтение успешно
             Serial.print("temp2: ");
             // Serial.println(ds2.getTemp());
             data.floattDS2 = ds2.getTemp();
+            data.temp_ds2x10 = (int)(data.floattDS2 * 10);
         } else {
             // Serial.println("error");
             data.floattDS2 = random(41, 44);
@@ -36,8 +42,7 @@ void getds18() {
 
         ds2.requestTemp();  // запрос следующего измерения
     }
-}  // getds18()
-//
+}  // get2ds18()
 //
 //
 

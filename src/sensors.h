@@ -10,6 +10,7 @@ extern GyverDS18Single ds2;  // пин PIN_DS18B20_2
 extern DHT dht1;
 extern DHT dht2;
 
-void getds18();
+void get1ds18();
+void get2ds18();
 void getdht1();
 void getdht2();

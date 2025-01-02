@@ -34,7 +34,6 @@ struct Data  // обьявляем класс структуры
     int16_t tdht1MaxX10 = 0;
     int16_t dht1Treshold = 0;
     float floattdht1 = -80.0;
-    // bool dht1TempRele_enbl = 0; 
     bool dht1Rel_on = false;
     byte dht1State = 0; // автомат работы реле
 
@@ -42,17 +41,23 @@ struct Data  // обьявляем класс структуры
     int16_t hdht2Min = 0;
     int16_t dht2Treshold = 0;
     float floattdht2 = -80.0;
-    // bool dht2HumRele_enbl = 0;
-    bool dht2Rel_on = 0;
+    bool dht2Rel_on = false;
     byte dht2State = 0; // автомат работы реле
 
-    float floattDS1 = -80.0; // температура первого DS18B20    
-    bool DS1Rele_enbl = 0;
-    bool DS1Rel_on = 0;
 
+    int16_t temp_ds1x10 = 0;
+    int16_t tempMax_ds1x10 = 0;
+    int16_t temp_ds1Treshold = 0;
+    float floattDS1 = -80.0; // температура первого DS18B20    
+    bool DS1Rel_on = false;
+    byte ds1State = 0; // автомат работы реле
+
+    int16_t temp_ds2x10 = 0;
+    int16_t tempMin_ds2x10 = 0;
+    int16_t temp_ds2Treshold = 0;
     float floattDS2 = -80.0; // температура второго DS18B20
-    bool DS2Rele_enbl = 0; 
-    bool DS2Rel_on = 0;   
+    bool DS2Rel_on = false;   
+    byte ds2State = 0; // автомат работы реле
 
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;

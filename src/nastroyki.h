@@ -13,12 +13,16 @@
 #define ON 1  // включение симмисторов лог. единицей
 #define OFF 0 //
 
-#define PIN_DS18B20 13
-#define PIN_DS18B20_2 30
+//      //      //      для тестов пин 17 
+#define DS18B20_1 13
+#define DS_1_RELAY 18
+ 
+#define DS18B20_2 30
+#define DS_2_RELAY 19 // ?
 
 #define DHT1PIN 4
 #define DHT1TYPE DHT22
-#define DHT1RELAY 17 //32
+#define DHT1RELAY 32
 
 #define DHT2PIN 16
 #define DHT2TYPE DHT22
@@ -28,8 +32,8 @@
 #define RELE_2 4
 #define RELE_3 15
 #define RELE_4 16
-#define RELE_5 18
-#define RELE_6 19
+#define RELE_5 17  
+#define RELE_6 19 // ?
 
 #define RELE_FERTILIZER 23
 

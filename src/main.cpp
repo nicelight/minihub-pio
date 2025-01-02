@@ -29,9 +29,9 @@
 
 // обявление фкнций для их видимости из вкладок.
 
-Timer each10Sec(10000);  // таймер раз в 10 сек
-Timer each5min(300000);  // таймер раз в 5 мин
-Timer eachSec(1000);     // таймер раз в сек
+Timer each5Sec(5000ul);    // таймер раз в 10 сек
+Timer each5min(300000ul);  // таймер раз в 5 мин
+Timer eachSec(1000ul);     // таймер раз в сек
 
 LED indikator(INDIKATOR, 300, 3, 50, 20);  // каждые 1000 милисек мигаем 3 раза каждых 50 мс, время горения 20 мсек
 bool gotWifi = 0;                          // если подключено было к сети, то пробуем реконектиться каждых 5 мин
@@ -46,9 +46,6 @@ void setup() {
 
     Serial.begin(115200);
     Serial.println("\n\n\n\t\t\t ESP STARTED !\n\n");
-
-    ds1.requestTemp();  // первый запрос на измерение DS18B20
-    ds2.requestTemp();  // первый запрос на измерение DS18B20
 
     // ======== SETTINGS ========
     WiFi.mode(WIFI_AP_STA);  // режим AP_STA. Вызываем перед sett.begin(), чтобы settings знал о текущем режиме wifi
@@ -84,7 +81,7 @@ void setup() {
 
     db.init(kk::DS2name, "Имя второго DS18B20");
     db.init(kk::DS2Rele_enabled, (uint8_t)0);
-    db.init(kk::DS2Rele_startTemp, (uint8_t)26);
+    db.init(kk::DS2Rele_startTemp, (uint8_t)24);
     db.init(kk::DS2Rele_TempThreshold, (uint8_t)1);
 
     db.init(kk::t1Discr_name, "Реле 1");
@@ -165,7 +162,7 @@ void setup() {
     // пересчитываем температуру х10 чтобы не множиться в цикле
     data.tdht1MaxX10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
     data.hdht2Min = db[kk::dht2HumRele_startHum].toInt();
-    //берем показания 
+    // берем показания
     switch (db[kk::dht1TempRele_TempThreshold].toInt()) {
         case 0:
             data.dht1Treshold = 5;
@@ -194,7 +191,39 @@ void setup() {
             data.dht2Treshold = 10;
             break;
     }
-    userDhtRelays();
+    // userDhtRelays();
+    //
+    data.tempMax_ds1x10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+    data.tempMin_ds2x10 = db[kk::DS2Rele_startTemp].toInt() * 10;
+    switch (db[kk::DS1Rele_TempThreshold].toInt()) {
+        case 0:
+            data.temp_ds1Treshold = 2;
+            break;
+        case 1:
+            data.temp_ds1Treshold = 5;
+            break;
+        case 2:
+            data.temp_ds1Treshold = 10;
+            break;
+        case 3:
+            data.temp_ds1Treshold = 30;
+            break;
+    }
+    switch (db[kk::DS2Rele_TempThreshold].toInt()) {
+        case 0:
+            data.temp_ds2Treshold = 2;
+            break;
+        case 1:
+            data.temp_ds2Treshold = 5;
+            break;
+        case 2:
+            data.temp_ds2Treshold = 10;
+            break;
+        case 3:
+            data.temp_ds2Treshold = 30;
+            break;
+    }
+    // userDSRelays();
 
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
@@ -234,7 +263,7 @@ void loop() {
     NTP.tick();
     indikator.tick();  // in loop
 
-    if (each10Sec.ready())  // раз в 5 сек
+    if (each5Sec.ready())  // раз в 5 сек
     {
         // поддержка NTP
         // делаем тут, а не в лупе,
@@ -248,39 +277,26 @@ void loop() {
             Serial.print("\n\n\tNTP not reached\n\n");
 
         // sensorsProbe(); // опросим датчики
-        getds18();
-        getdht1();
-        delay(2);
-        getdht2();
+        getdht1();  // опрос медленный и умножение
+        delay(1);   //  отдадим управление вайфаю
+        getdht2();  // // опрос медленный и умножение
+    }  // each5Sec
 
-        // if (firstSlowSensor) {
-        //     firstSlowSensor = 0;
-        //     getdht1();
-
-        // } else {
-        //     firstSlowSensor = 1;
-        //     getdht2();
-        // }
-    }  // each10Sec
-
-    if (eachSec.ready()) {  // раз в сек
-
-        // if (initially)  // костыль для подхвата ntp, потому что если ntp отвалился, нельзя все время его чекать, мы его выше чекаем раз в минуту всего
-        // {
-        //     initially--;
-        //     data.secondsNow = NTP.daySeconds();  // вначале схватываем с ntp
-        // }
+    if (eachSec.ready()) {                  // раз в сек
         data.secondsNow++;                  // инкермент реалтайм
         data.secondsUptime++;               // инкермент аптайм
         if (data.secondsUptime == 86399) {  // инкремент дней аптайма
             data.secondsUptime = 0;
             data.uptime_Days++;
         }
+        get1ds18();  // тут умножение, часто не вызываем
+        get2ds18();  // тут умножение, часто не вызываем
         userSixTimers();
         userNatureTimer();
         userFertiTimer();
     }
-    userDhtRelays();  // тут ничего медленного, можно часто вызывать
+    userDhtRelays();  // тут ничего медленного, можно часто
+    userDSRelays();   // тут ничего медленного, можно часто
 
     // if(db.changed()){
     //   Serial.print("База изменена\t");
