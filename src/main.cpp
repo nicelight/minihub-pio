@@ -34,7 +34,7 @@ Timer each5min(300000ul);  // таймер раз в 5 мин
 Timer eachSec(1000ul);     // таймер раз в сек
 
 LED indikator(INDIKATOR, 300, 3, 50, 20);  // каждые 1000 милисек мигаем 3 раза каждых 50 мс, время горения 20 мсек
-bool gotWifi = 0;                          // если подключено было к сети, то пробуем реконектиться каждых 5 мин
+bool gotWifi = false;                      // если подключено было к сети
 int valNum;
 uint32_t startSeconds = 0;
 uint32_t stopSeconds = 0;
@@ -227,13 +227,13 @@ void setup() {
 
     // ======== WIFI ========
     // подключение и реакция на подключение или ошибку
-    WiFiConnector.setPass("1234567890");  // пароль точки доступа
-    WiFiConnector.setTimeout(10);         // сколько секунд пытаться приконнектиттся
+    WiFiConnector.setPass("12345678");  // пароль точки доступа
+    WiFiConnector.setTimeout(10);       // сколько секунд пытаться приконнектиттся
     WiFiConnector.onConnect([]() {
         Serial.print("Con with IP: ");
         Serial.println(WiFi.localIP());
         indikator.setPeriod(3000, 1, 200, 150);  // раз в 000 сек, 0 раз взмигнем - по 00 милисек периоды, гореть будем 0 милисек
-        gotWifi = 1;
+        gotWifi = true;
         NTP.begin();
         NTP.setPeriod(600);  // обновлять раз в 600 сек
         NTP.tick();
@@ -243,12 +243,7 @@ void setup() {
         Serial.print("Error! start AP ");
         Serial.println(WiFi.softAPIP());
         indikator.setPeriod(600, 2, 100, 50);  // раз в  секунду два раза взмигнем - по 200 милисек, гореть будем 50 милисек
-        //  по истечении 5 инут ребутаемся чтобы проверить вайфай
-        if (each5min.ready() && gotWifi) {
-            indikator.setPeriod(3000, 30, 100, 70);  // общее время, кол-во, период одного, один зажжен на.
-            delay(3000);
-            ESP.restart();
-        }
+        if (each5min.ready()) ESP.restart(); // через 5 минут ребутаемся
     });
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
@@ -258,31 +253,41 @@ void setup() {
 }  // setup
 
 void loop() {
+    // если wifi связь есть, сбрасываем вочдог таймер 5 минутный.
+    // если нет связи, ждем 5 минут и ребутаемся, а то мало ли
+    // если связь восстановилась после потери, снова мигаем плавно
     WiFiConnector.tick();  // поддержка wifi связи
-    sett.tick();           // поддержка веб интерфейса
+    if (WiFiConnector.connected()) {
+        if (!gotWifi) indikator.setPeriod(3000, 1, 200, 150);  // спокойное мигание после реконнекта к wifi
+        gotWifi = true;
+        each5min.rst();
+    } else {
+        if (gotWifi) {
+            gotWifi = false;  // для запуска частой мигалки
+            // общее время, кол-во, период одного, один зажжен на.
+            indikator.setPeriod(1000, 10, 100, 70);  // часто мигаем
+        }
+        if (each5min.ready()) ESP.restart();
+    }  // WiFi.connected()
+    sett.tick();  // поддержка веб интерфейса
     NTP.tick();
     indikator.tick();  // in loop
 
     if (each5Sec.ready())  // раз в 5 сек
     {
         // поддержка NTP
-        // делаем тут, а не в лупе,
-        // чтобы при отпадении интернета все не зависало
-
         if (!NTP.status() && NTP.synced()) {
             data.secondsNow = NTP.daySeconds();
             curDataTime = NTP.getUnix();
-
         } else
-            Serial.print("\n\n\tNTP not reached\n\n");
-
+            Serial.println("\n\n\t\t\t\tNTP not reached\n\n");
         // sensorsProbe(); // опросим датчики
-        getdht1();  // опрос медленный и умножение
+        getdht1();  // опрос датчика медленный и умножение
         delay(1);   //  отдадим управление вайфаю
-        getdht2();  // // опрос медленный и умножение
+        getdht2();  // // опрос датчика медленный и умножение
     }  // each5Sec
 
-    if (eachSec.ready()) {                  // раз в сек
+    if (eachSec.ready()) {                  // раз в 1 сек
         data.secondsNow++;                  // инкермент реалтайм
         data.secondsUptime++;               // инкермент аптайм
         if (data.secondsUptime == 86399) {  // инкремент дней аптайма
