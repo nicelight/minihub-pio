@@ -1,21 +1,7 @@
-float h = dht1.readHumidity();
+https://esp.huhn.me/
 
-  // Read temperature as Celsius (the default)
-  float t = dht1.readTemperature();
+0x1000 - загрузчик прошивки (bootloader), адрес для ESP32, ESP32S2. Для ESP32C3 и ESP32S3 - 0x0000 адрес;
 
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t)) {
-    Serial.println(F("Failed to read from dht1 sensor!"));
-    return;
-  }
+0x8000 - таблица разметки разделов. Определяет размер секций и наличие SPIFFS  диска;
 
-  float hic = dht1.computeHeatIndex(t, h, false);   // Compute heat index in Celsius (isFahreheit = false)
-
-
-  Serial.print(F("Humidity: "));
-  Serial.print(h);
-  Serial.print(F("%  Temperature: "));
-  Serial.print(t);
-  Serial.print(F("°C  Heat index: "));
-  Serial.print(hic);
-  Serial.print(F("°C "));
+0x10000 - сама прошивка. Только этот файл изменяется при компиляции новой прошивки.
