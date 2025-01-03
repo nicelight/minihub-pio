@@ -89,21 +89,6 @@ void update(sets::Updater &upd) {
 //
 
 void build(sets::Builder &b) {
-    {
-        sets::Group g(b, "Логи");
-
-        b.Log(logger);
-        if (b.Button(kk::logUpdate, "Обновить лог", 0x2f7d34)) {
-            logger.print(millis() >> 10);
-            logger.print(" ");
-            logger.print("день недели:");
-            logger.println(curDataTime.weekDay);
-            // logger.print("dht1 sw enbl: ");
-            // logger.println(data.dht1TempRele_enbl);
-            b.reload();
-        }
-    }  // g(b, "Логи");
-
     // обработка действий от виджетов:
     switch (b.build.id) {
         // case kk::logUpdate:  // если ввели импут
@@ -740,10 +725,23 @@ void build(sets::Builder &b) {
 
             {
                 sets::Menu g(b, "примеры");
+                {
+                    sets::Group g(b, "Логи");
+
+                    b.Log(logger);
+                    if (b.Button(kk::logUpdate, "Обновить лог", 0x2f7d34)) {
+                        logger.print(millis() >> 10);
+                        logger.print(" ");
+                        logger.print("день недели:");
+                        logger.println(curDataTime.weekDay);
+                        // logger.print("dht1 sw enbl: ");
+                        // logger.println(data.dht1TempRele_enbl);
+                        b.reload();
+                    }
+                }  // g(b, "Логи");
                 b.Input(kk::txt, "Text");
                 b.Pass(kk::pass, "Password");
                 b.Input(kk::uintw, "uint");
-
                 {
                     sets::Group g(b, "групка");
                     // пример изменения имени виджета
