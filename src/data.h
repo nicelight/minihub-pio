@@ -21,6 +21,37 @@ Data data;
 #pragma once
 #include <Arduino.h>
 
+// подструктруа структуры Data
+struct Ds18b20_sensor {
+    int16_t tx10 = 0;       // температура переведенная из флоат в интежер * 10
+    int16_t tTrigx10 = 0;   // температура срабатывания реле
+    int16_t tTreshold = 0;  // температура гистерезиса отключения реле
+    float tfloat = -80.0;
+    bool rel_on = false;  // флаг включения реле
+    byte State = 0;       // автомат состояний работы реле
+};
+
+
+    // int16_t hdht2 = -80;  // темп, влажность первого DHT22
+    // int16_t hdht2Min = 0;
+    // int16_t dht2Treshold = 0;
+    // float floattdht2 = -80.0;
+    // bool dht2Rel_on = false;
+    // byte dht2State = 0;  // автомат работы реле
+
+
+struct DHTxx_sensor {
+    int16_t hum = -80;  // влажность DHT22
+    int16_t tx10 = -80;  // температура DHT22 интежер * 10
+    int16_t tTrigx10 = 0; // температура сработки реле 
+    int16_t hTrig = 0; //влажность сработки реле
+    int16_t hTreshold = 0;
+    int16_t tTreshold = 0;
+    float tfloat = -80.0;
+    bool Rel_on = false;
+    byte State = 0;  // автомат работы реле
+};
+
 struct Data  // обьявляем класс структуры
 {
     uint32_t secondsNow = 44000ul;
@@ -29,35 +60,33 @@ struct Data  // обьявляем класс структуры
     // uint32_t secondsUptime = 86390;
     // byte uptime_Days = 1;
 
-    int16_t hdht1 = -80; // темп, влажность первого DHT22 
-    int16_t tdht1x10 = -80;
-    int16_t tdht1MaxX10 = 0;
-    int16_t dht1Treshold = 0;
-    float floattdht1 = -80.0;
-    bool dht1Rel_on = false;
-    byte dht1State = 0; // автомат работы реле
+    struct DHTxx_sensor dhtOne;
+    struct DHTxx_sensor dhtTwo;
 
-    int16_t hdht2 = -80; // темп, влажность первого DHT22 
-    int16_t hdht2Min = 0;
-    int16_t dht2Treshold = 0;
-    float floattdht2 = -80.0;
-    bool dht2Rel_on = false;
-    byte dht2State = 0; // автомат работы реле
+    // int16_t hdht2 = -80;  // темп, влажность первого DHT22
+    // int16_t hdht2Min = 0;
+    // int16_t dht2Treshold = 0;
+    // float floattdht2 = -80.0;
+    // bool dht2Rel_on = false;
+    // byte dht2State = 0;  // автомат работы реле
 
+    struct Ds18b20_sensor dsOne;
+    struct Ds18b20_sensor dsTwo;
 
-    int16_t temp_ds1x10 = 0;
-    int16_t tempMax_ds1x10 = 0;
-    int16_t temp_ds1Treshold = 0;
-    float floattDS1 = -80.0; // температура первого DS18B20    
-    bool DS1Rel_on = false;
-    byte ds1State = 0; // автомат работы реле
+    // было в структуре Data, перенесено в подструктуры DS18B20_sensor
+    // int16_t temp_ds1x10 = 0;
+    // int16_t tempMax_ds1x10 = 0;
+    // int16_t temp_ds1Treshold = 0;
+    // float floattDS1 = -80.0;  // температура первого DS18B20
+    // bool DS1Rel_on = false;
+    // byte ds1State = 0;  // автомат работы реле
 
-    int16_t temp_ds2x10 = 0;
-    int16_t tempMin_ds2x10 = 0;
-    int16_t temp_ds2Treshold = 0;
-    float floattDS2 = -80.0; // температура второго DS18B20
-    bool DS2Rel_on = false;   
-    byte ds2State = 0; // автомат работы реле
+    // int16_t temp_ds2x10 = 0;
+    // int16_t tempMin_ds2x10 = 0;
+    // int16_t temp_ds2Treshold = 0;
+    // float floattDS2 = -80.0;  // температура второго DS18B20
+    // bool DS2Rel_on = false;
+    // byte ds2State = 0;  // автомат работы реле
 
     // чтобы не проверять булевы значения ползунков в интерфейсе из базы, пишем их сюда сначала
     bool t1discr_enbl = 0;
@@ -96,7 +125,7 @@ struct Data  // обьявляем класс структуры
     bool relFerti_on = 0;
     uint32_t relefertiSec = 0;
     int32_t untilNextDoze = 86340;  // через сколько следующее включение
-     
+
     //  из примеров Гайвера
     int number = 123456;
     String label = "label";
@@ -113,11 +142,18 @@ struct Data  // обьявляем класс структуры
     uint8_t sel = 1;
 };
 
+// for cpp
 extern Data data;  // объявляем что у нас будет переменная data класса Data
+extern DHTxx_sensor dhtOne;
+extern DHTxx_sensor dhtTwo;
+
+extern Ds18b20_sensor dsOne;
+extern Ds18b20_sensor dsTwo;
+
+extern uint16_t brightn[101];  // если есть data.cpp
 
 // constexpr size_t BRIGHT_SIZE = 100;// размер массива
 // extern uint16_t brightn[BRIGHT_SIZE];
-extern uint16_t brightn[101];
 
 /*
 byte red, green, blue;

@@ -48,6 +48,7 @@ void init_pins() {
     pinMode(DS_2_RELAY, OUTPUT);
     digitalWrite(DS_2_RELAY, OFF);
     
+    pinMode(BTN, INPUT_PULLUP);
 
     // настройка ШИМ
     ledcSetup(RED_PWM_CHANNEL, 12000, 12);    // Канал 0
@@ -64,6 +65,8 @@ void init_pins() {
     ds1.requestTemp();  // первый запрос на измерение DS18B20 1
     ds2.requestTemp();  // первый запрос на измерение DS18B20 2
 
+    // тесты 
+    // data.dsOne.t = 5; 
 }  // init_pins()
 //
 //
@@ -95,146 +98,146 @@ void read_t1_from_db() {
 
 void userDhtRelays() {
     // === термореле DHT1 для охлаждения воздуха
-    switch (data.dht1State) {
+    switch (data.dhtOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
             //            // if (data.dht1TempRele_enbl != 0) {
             if (db[kk::dht1TempRele_enabled].toInt() != 0) {
-                data.dht1State = 5;
-            } else if (data.dht1Rel_on) {
-                data.dht1State = 20;  // выключим по перемещению ползунка в OFF
+                data.dhtOne.State = 5;
+            } else if (data.dhtOne.Rel_on) {
+                data.dhtOne.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
         case 5:  // ожидание превышения теспературы
-            if (data.tdht1x10 >= data.tdht1MaxX10) {
-                data.dht1State = 10;
+            if (data.dhtOne.tx10 >= data.dhtOne.tTrigx10) {
+                data.dhtOne.State = 10;
             }
             break;
         case 10:  // включаем охлаждение
             digitalWrite(DHT1RELAY, ON);
-            data.dht1Rel_on = true;
-            data.dht1State = 15;
+            data.dhtOne.Rel_on = true;
+            data.dhtOne.State = 15;
             break;
         case 15:  // ожидаем понижения температуры + трешхолд
-            if (data.tdht1x10 <= data.tdht1MaxX10 - data.dht1Treshold) {
-                data.dht1State = 20;
+            if (data.dhtOne.tx10 <= data.dhtOne.tTrigx10 - data.dhtOne.tTreshold) {
+                data.dhtOne.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
             digitalWrite(DHT1RELAY, OFF);
-            data.dht1Rel_on = false;
-            data.dht1State = 0;
+            data.dhtOne.Rel_on = false;
+            data.dhtOne.State = 0;
             break;
     }  // switch (dht1State)
     //
     // === термореле DHT2 для увлажнения воздуха
-    switch (data.dht2State) {
+    switch (data.dhtTwo.State) {
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
             //            // if (data.dht1TempRele_enbl != 0) {
             if (db[kk::dht2HumRele_enabled].toInt() != 0) {
-                data.dht2State = 5;
-            } else if (data.dht2Rel_on) {
-                data.dht2State = 20;  // выключим по перемещению ползунка в OFF
+                data.dhtTwo.State = 5;
+            } else if (data.dhtTwo.Rel_on) {
+                data.dhtTwo.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
         case 5:  // ожидание понижения влажности
-            if (data.hdht2 <= data.hdht2Min) {
-                data.dht2State = 10;
+            if (data.dhtTwo.hum <= data.dhtTwo.hTrig) {
+                data.dhtTwo.State = 10;
             }
             break;
         case 10:  // включаем охлаждение
             digitalWrite(DHT2RELAY, ON);
-            data.dht2Rel_on = true;
-            data.dht2State = 15;
+            data.dhtTwo.Rel_on = true;
+            data.dhtTwo.State = 15;
             break;
         case 15:  // ожидаем повышения влажности + трешхолд
-            if (data.hdht2 >= data.hdht2Min + data.dht2Treshold) {
-                data.dht2State = 20;
+            if (data.dhtTwo.hum >= data.dhtTwo.hTrig + data.dhtTwo.hTreshold) {
+                data.dhtTwo.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
             digitalWrite(DHT2RELAY, OFF);
-            data.dht2Rel_on = false;
-            data.dht2State = 0;
+            data.dhtTwo.Rel_on = false;
+            data.dhtTwo.State = 0;
             break;
-    }  // switch (dht2State)
+    }  // switch (dhtTwo.State)
 }  // userDhtRelays()
 //
 //
 //
 void userDSRelays() {
     // === термореле DS18B20_1 для охлаждения воды\почвы
-    switch (data.ds1State) {
+    switch (data.dsOne.State) {
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
             if (db[kk::DS1Rele_enabled].toInt() != 0) {
-                data.ds1State = 5;
-            } else if (data.DS1Rel_on) {
-                data.ds1State = 20;  // выключим по перемещению ползунка в OFF
+                data.dsOne.State = 5;
+            } else if (data.dsOne.rel_on) {
+                data.dsOne.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
         case 5:  // ожидание превышения теспературы
-            if (data.temp_ds1x10 >= data.tempMax_ds1x10) {
-                data.ds1State = 10;
+            if (data.dsOne.tx10 >= data.dsOne.tTrigx10) {
+                data.dsOne.State = 10;
             }
             break;
         case 10:  // включаем охлаждение
             digitalWrite(DS_1_RELAY, ON);
-            data.DS1Rel_on = true;
-            data.ds1State = 15;
+            data.dsOne.rel_on = true;
+            data.dsOne.State = 15;
             break;
         case 15:  // ожидаем понижения температуры + трешхолд
-            if (data.temp_ds1x10 <= data.tempMax_ds1x10 - data.temp_ds1Treshold) {
-                data.ds1State = 20;
+            if (data.dsOne.tx10 <= data.dsOne.tTrigx10 - data.dsOne.tTreshold) {
+                data.dsOne.State = 20;
             }
             break;
         case 20:  // используется при переключении ползунка в морде
             digitalWrite(DS_1_RELAY, OFF);
-            data.DS1Rel_on = false;
-            data.ds1State = 0;
+            data.dsOne.rel_on = false;
+            data.dsOne.State = 0;
             break;
     }  // switch (ds1State)
     //
     // === термореле DS18B20 2 для нагрева воды\почвы
-    switch (data.ds2State) {
+    switch (data.dsTwo.State) {
         // инициализация
         //  ползунок включен - отрабатываем
         // выключен и включено реле - уйдем на выключение
         case 0:
             if (db[kk::DS2Rele_enabled].toInt() != 0) {
-                data.ds2State = 5;
-            } else if (data.DS2Rel_on) {
-                data.ds2State = 20;  // выключим по перемещению ползунка в OFF
+                data.dsTwo.State = 5;
+            } else if (data.dsTwo.rel_on) {
+                data.dsTwo.State = 20;  // выключим по перемещению ползунка в OFF
             }
             break;
         case 5:  // ожидание понижения теспературы
-            if (data.temp_ds2x10 <= data.tempMin_ds2x10) {
-                data.ds2State = 10;
+            if (data.dsTwo.tx10 <= data.dsTwo.tTrigx10) {
+                data.dsTwo.State = 10;
             }
             break;
         case 10:  // включаем нагрев
             digitalWrite(DS_2_RELAY, ON);
-            data.DS2Rel_on = true;
-            data.ds2State = 15;
+            data.dsTwo.rel_on = true;
+            data.dsTwo.State = 15;
             break;
         case 15:  // ожидаем повышение температуры + трешхолд
-            if (data.temp_ds2x10 >= data.tempMin_ds2x10 + data.temp_ds2Treshold) {
-                data.ds2State = 20;
+            if (data.dsTwo.tx10 >= data.dsTwo.tTrigx10 + data.dsTwo.tTreshold) {
+                data.dsTwo.State = 20;
             }
             break;
         case 20:  // так же используется при переключении ползунка в морде
             digitalWrite(DS_2_RELAY, OFF);
-            data.DS2Rel_on = false;
-            data.ds2State = 0;
+            data.dsTwo.rel_on = false;
+            data.dsTwo.State = 0;
             break;
-    }  // switch (ds2State)
+    }  // switch (dsTwo.State)
     //
 }  // userDSRelays()
 //

@@ -16,11 +16,11 @@ void get1ds18() {
         if (ds1.readTemp()) {  // если чтение успешно
             Serial.print("temp1: ");
             // Serial.println(ds1.getTemp());
-            data.floattDS1 = ds1.getTemp();
-            data.temp_ds1x10 = (int)(data.floattDS1 * 10);
+            data.dsOne.tfloat = ds1.getTemp();
+            data.dsOne.tx10 = (int)(data.dsOne.tfloat * 10);
         } else {
             // Serial.println("error");
-            data.floattDS1 = -80.0;
+            data.dsOne.tfloat = -80.0;
         }
 
         ds1.requestTemp();  // запрос следующего измерения
@@ -33,11 +33,11 @@ void get2ds18() {
         if (ds2.readTemp()) {  // если чтение успешно
             Serial.print("temp2: ");
             // Serial.println(ds2.getTemp());
-            data.floattDS2 = ds2.getTemp();
-            data.temp_ds2x10 = (int)(data.floattDS2 * 10);
+            data.dsTwo.tfloat = ds2.getTemp();
+            data.dsTwo.tx10 = (int)(data.dsTwo.tfloat * 10);
         } else {
             // Serial.println("error");
-            data.floattDS2 = random(41, 44);
+            data.dsTwo.tfloat = random(41, 44);
         }
 
         ds2.requestTemp();  // запрос следующего измерения
@@ -53,12 +53,12 @@ void getdht1() {
     float t = dht1.readTemperature();
     // float hic = dht1.computeHeatIndex(t, h, false);  // Compute heat index in Celsius (isFahreheit = false)
     if (isnan(h) || isnan(t)) {
-        data.hdht1 = -80;
-        data.floattdht1 = -80.0;
+        data.dhtOne.hum = -80;
+        data.dhtOne.tfloat = -80.0;
     } else {
-        data.hdht1 = (int)h;
-        data.tdht1x10 = (int)(t * 10);
-        data.floattdht1 = t;
+        data.dhtOne.hum = (int)h;
+        data.dhtOne.tx10 = (int)(t * 10);
+        data.dhtOne.tfloat = t;
     }
 }  // getdht()
 
@@ -66,11 +66,11 @@ void getdht2() {
     float h = dht2.readHumidity();
     float t = dht2.readTemperature();
     if (isnan(h) || isnan(t)) {
-        data.hdht2 = -80;
-        data.floattdht2 = -80.0;
+        data.dhtTwo.hum = -80;
+        data.dhtTwo.tfloat = -80.0;
     } else {
-        data.hdht2 = (int)h;
-        data.floattdht2 = t;
+        data.dhtTwo.hum = (int)h;
+        data.dhtTwo.tfloat = t;
     }
 }  // getdht()
 //

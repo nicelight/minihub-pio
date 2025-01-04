@@ -160,67 +160,69 @@ void setup() {
     data.t6discr_enbl = db[kk::t6Discr_enabled];
     userSixTimers();
     // пересчитываем температуру х10 чтобы не множиться в цикле
-    data.tdht1MaxX10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
-    data.hdht2Min = db[kk::dht2HumRele_startHum].toInt();
+    // tdht1MaxX10
+    // hdht2Min
+    data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+    data.dhtTwo.hTrig = db[kk::dht2HumRele_startHum].toInt();
     // берем показания
     switch (db[kk::dht1TempRele_TempThreshold].toInt()) {
         case 0:
-            data.dht1Treshold = 5;
+            data.dhtOne.tTreshold = 5;
             break;
         case 1:
-            data.dht1Treshold = 10;
+            data.dhtOne.tTreshold = 10;
             break;
         case 2:
-            data.dht1Treshold = 20;
+            data.dhtOne.tTreshold = 20;
             break;
         case 3:
-            data.dht1Treshold = 30;
+            data.dhtOne.tTreshold = 30;
             break;
     }
     switch (db[kk::dht2HumRele_HumThreshold].toInt()) {
         case 0:
-            data.dht2Treshold = 1;
+            data.dhtTwo.hTreshold = 1;
             break;
         case 1:
-            data.dht2Treshold = 2;
+            data.dhtTwo.hTreshold = 2;
             break;
         case 2:
-            data.dht2Treshold = 5;
+            data.dhtTwo.hTreshold = 5;
             break;
         case 3:
-            data.dht2Treshold = 10;
+            data.dhtTwo.hTreshold = 10;
             break;
     }
     // userDhtRelays();
     //
-    data.tempMax_ds1x10 = db[kk::DS1Rele_startTemp].toInt() * 10;
-    data.tempMin_ds2x10 = db[kk::DS2Rele_startTemp].toInt() * 10;
+    data.dsOne.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+    data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;
     switch (db[kk::DS1Rele_TempThreshold].toInt()) {
         case 0:
-            data.temp_ds1Treshold = 2;
+            data.dsOne.tTreshold = 2;
             break;
         case 1:
-            data.temp_ds1Treshold = 5;
+            data.dsOne.tTreshold = 5;
             break;
         case 2:
-            data.temp_ds1Treshold = 10;
+            data.dsOne.tTreshold = 10;
             break;
         case 3:
-            data.temp_ds1Treshold = 30;
+            data.dsOne.tTreshold = 30;
             break;
     }
     switch (db[kk::DS2Rele_TempThreshold].toInt()) {
         case 0:
-            data.temp_ds2Treshold = 2;
+            data.dsTwo.tTreshold = 2;
             break;
         case 1:
-            data.temp_ds2Treshold = 5;
+            data.dsTwo.tTreshold = 5;
             break;
         case 2:
-            data.temp_ds2Treshold = 10;
+            data.dsTwo.tTreshold = 10;
             break;
         case 3:
-            data.temp_ds2Treshold = 30;
+            data.dsTwo.tTreshold = 30;
             break;
     }
     // userDSRelays();
@@ -243,7 +245,7 @@ void setup() {
         Serial.print("Error! start AP ");
         Serial.println(WiFi.softAPIP());
         indikator.setPeriod(600, 2, 100, 50);  // раз в  секунду два раза взмигнем - по 200 милисек, гореть будем 50 милисек
-        if (each5min.ready()) ESP.restart(); // через 5 минут ребутаемся
+        if (each5min.ready()) ESP.restart();   // через 5 минут ребутаемся
     });
 
     WiFiConnector.connect(db[kk::wifi_ssid], db[kk::wifi_pass]);
@@ -314,5 +316,19 @@ void loop() {
     //     Serial.print(prevPinState);
     //     Serial.print("\n");
     // }
+    if (!digitalRead(BTN)) {
+        delay(20);
+        if (!digitalRead(BTN)) {
+            int cnt = 0;
+            while (!digitalRead(BTN)) {
+                digitalWrite(INDIKATOR, 1);
+                delay(30);
+                digitalWrite(INDIKATOR, 0);
+                delay(30);
+                if(cnt < 60) cnt++;
+                else ESP.restart();
 
+            }
+        }
+    }//BTN
 }  // loop

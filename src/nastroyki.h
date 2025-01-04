@@ -43,8 +43,8 @@
 #define GREEN_PWM_CHANNEL 1 
 #define BLUE_PWM_CHANNEL 2
 
-
 #define INDIKATOR 2 // на каком пине индикаторный светодиод
+#define BTN 0 // встроенная кнопка
 
 
 

@@ -63,17 +63,17 @@ void update(sets::Updater &upd) {
     upd.update("aquaDoz1_led"_h, data.relFerti_on);
     upd.update("aquaDoz1_nextDozeIn"_h, data.untilNextDoze);
 
-    upd.update(kk::floattempdht1, data.floattdht1);
-    upd.update(kk::humdht1, data.hdht1);
-    upd.update(kk::dht1Rele_led, data.dht1Rel_on);
-    upd.update(kk::floattempdht2, data.floattdht2);
-    upd.update(kk::humdht2, data.hdht2);
-    upd.update(kk::dht2Rele_led, data.dht2Rel_on);
+    upd.update(kk::floattempdht1, data.dhtOne.tfloat);
+    upd.update(kk::humdht1, data.dhtOne.hum);
+    upd.update(kk::dht1Rele_led, data.dhtOne.Rel_on);
+    upd.update(kk::floattempdht2, data.dhtTwo.tfloat);
+    upd.update(kk::humdht2, data.dhtTwo.hum);
+    upd.update(kk::dht2Rele_led, data.dhtTwo.Rel_on);
 
-    upd.update(kk::floattempDS1, data.floattDS1);
-    upd.update(kk::DS1Rele_led, data.DS1Rel_on);
-    upd.update(kk::floattempDS2, data.floattDS2);
-    upd.update(kk::DS2Rele_led, data.DS2Rel_on);
+    upd.update(kk::floattempDS1, data.dsOne.tfloat);
+    upd.update(kk::DS1Rele_led, data.dsOne.rel_on);
+    upd.update(kk::floattempDS2, data.dsTwo.tfloat);
+    upd.update(kk::DS2Rele_led, data.dsTwo.rel_on);
 
     upd.update("lbl1"_h, (String)(curDataTime.weekDay + String(" день недели")));
     upd.update("lbl2"_h, millis());
@@ -203,23 +203,23 @@ void build(sets::Builder &b) {
             break;
         case kk::dht1TempRele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.tdht1MaxX10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
+            data.dhtOne.tTrigx10 = db[kk::dht1TempRele_startTemp].toInt() * 10;
             userDhtRelays();
             b.reload();
             break;
         case kk::dht1TempRele_TempThreshold:
             switch (db[kk::dht1TempRele_TempThreshold].toInt()) {
                 case 0:
-                    data.dht1Treshold = 5;
+                    data.dhtOne.tTreshold = 5;
                     break;
                 case 1:
-                    data.dht1Treshold = 10;
+                    data.dhtOne.tTreshold = 10;
                     break;
                 case 2:
-                    data.dht1Treshold = 20;
+                    data.dhtOne.tTreshold = 20;
                     break;
                 case 3:
-                    data.dht1Treshold = 30;
+                    data.dhtOne.tTreshold = 30;
                     break;
             }
             userDhtRelays();
@@ -228,23 +228,23 @@ void build(sets::Builder &b) {
 
         case kk::dht2HumRele_startHum:
             // пересчитываем влажность
-            data.hdht2Min = db[kk::dht2HumRele_startHum].toInt();
+            data.dhtTwo.hTrig = db[kk::dht2HumRele_startHum].toInt();
             userDhtRelays();
             b.reload();
             break;
         case kk::dht2HumRele_HumThreshold:
             switch (db[kk::dht2HumRele_HumThreshold].toInt()) {
                 case 0:
-                    data.dht2Treshold = 1;
+                    data.dhtTwo.hTreshold = 1;
                     break;
                 case 1:
-                    data.dht2Treshold = 2;
+                    data.dhtTwo.hTreshold = 2;
                     break;
                 case 2:
-                    data.dht2Treshold = 5;
+                    data.dhtTwo.hTreshold = 5;
                     break;
                 case 3:
-                    data.dht2Treshold = 10;
+                    data.dhtTwo.hTreshold = 10;
                     break;
             }
             userDhtRelays();
@@ -252,7 +252,7 @@ void build(sets::Builder &b) {
             break;
         case kk::DS1Rele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.tempMax_ds1x10 = db[kk::DS1Rele_startTemp].toInt() * 10;
+            data.dsOne.tTrigx10 = db[kk::DS1Rele_startTemp].toInt() * 10;
             userDSRelays();
             b.reload();
             break;
@@ -260,16 +260,16 @@ void build(sets::Builder &b) {
         case kk::DS1Rele_TempThreshold:
             switch (db[kk::DS1Rele_TempThreshold].toInt()) {
                 case 0:
-                    data.temp_ds1Treshold = 2;
+                    data.dsOne.tTreshold = 2;
                     break;
                 case 1:
-                    data.temp_ds1Treshold = 5;
+                    data.dsOne.tTreshold = 5;
                     break;
                 case 2:
-                    data.temp_ds1Treshold = 10;
+                    data.dsOne.tTreshold = 10;
                     break;
                 case 3:
-                    data.temp_ds1Treshold = 30;
+                    data.dsOne.tTreshold = 30;
                     break;
             }
             userDSRelays();
@@ -278,7 +278,7 @@ void build(sets::Builder &b) {
 
         case kk::DS2Rele_startTemp:
             // пересчитываем температуру х10 чтобы не множиться в цикле. аналогично в setup()
-            data.tempMin_ds2x10 = db[kk::DS2Rele_startTemp].toInt() * 10;
+            data.dsTwo.tTrigx10 = db[kk::DS2Rele_startTemp].toInt() * 10;
             userDSRelays();
             b.reload();
             break;
@@ -286,16 +286,16 @@ void build(sets::Builder &b) {
         case kk::DS2Rele_TempThreshold:
             switch (db[kk::DS2Rele_TempThreshold].toInt()) {
                 case 0:
-                    data.temp_ds2Treshold = 2;
+                    data.dsTwo.tTreshold = 2;
                     break;
                 case 1:
-                    data.temp_ds2Treshold = 5;
+                    data.dsTwo.tTreshold = 5;
                     break;
                 case 2:
-                    data.temp_ds2Treshold = 10;
+                    data.dsTwo.tTreshold = 10;
                     break;
                 case 3:
-                    data.temp_ds2Treshold = 30;
+                    data.dsTwo.tTreshold = 30;
                     break;
             }
             userDSRelays();
@@ -334,13 +334,13 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
-            b.LabelFloat(kk::floattempdht1, db[kk::dht1name], data.floattdht1, 1, 0xec9736);  // DHT22 темп 1
+            b.LabelFloat(kk::floattempdht1, db[kk::dht1name], data.dhtOne.tfloat, 1, 0xec9736);  // DHT22 темп 1
             b.Label("°С");
         }
         {
             sets::Row g(b);
-            // b.LabelNum(kk::humdht1, "Влажность", data.hdht1, sets::Colors::Aqua);  // влажность 1
-            b.LabelNum(kk::humdht1, "Влажность", data.hdht1, 0xd17e1f);  // 0xd17e1f влажность 1
+            // b.LabelNum(kk::humdht1, "Влажность", data.dhtOne.hum, sets::Colors::Aqua);  // влажность 1
+            b.LabelNum(kk::humdht1, "Влажность", data.dhtOne.hum, 0xd17e1f);  // 0xd17e1f влажность 1
             // b.Label("%", "");
             b.Label("%");
         }
@@ -348,14 +348,14 @@ void build(sets::Builder &b) {
             // data.dht1TempRele_enbl = db[kk::dht1TempRele_enabled].toInt();
 
             if (db[kk::dht1TempRele_enabled].toInt() == 0)
-                data.dht1State = 0;  // принудительно выключаем реле
+                data.dhtOne.State = 0;  // принудительно выключаем реле
             userDhtRelays();
             b.reload();
         }
         if (db[kk::dht1TempRele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
-                b.LED(kk::dht1Rele_led, "Cтатус >>", data.dht1Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
+                b.LED(kk::dht1Rele_led, "Cтатус >>", data.dhtOne.Rel_on, sets::Colors::Gray, sets::Colors::Yellow);
                 b.Label(" ");
             }
             b.Number(kk::dht1TempRele_startTemp, "Включается при превышении, °C");
@@ -364,24 +364,24 @@ void build(sets::Builder &b) {
         b.Label(" ");
         {
             sets::Row g(b);
-            b.LabelFloat(kk::floattempdht2, db[kk::dht2name], data.floattdht2, 1, 0x3da7f2);  // DHT22 темп 2
+            b.LabelFloat(kk::floattempdht2, db[kk::dht2name], data.dhtTwo.tfloat, 1, 0x3da7f2);  // DHT22 темп 2
             b.Label("°С");
         }
         {
             sets::Row g(b);
-            b.LabelNum(kk::humdht2, "Влажность", data.hdht2, 0x2680bf);  // Влажность 2
+            b.LabelNum(kk::humdht2, "Влажность", data.dhtTwo.hum, 0x2680bf);  // Влажность 2
             b.Label("%");
         }
         if (b.Switch(kk::dht2HumRele_enabled, "Увлажнение", nullptr, 0x3da7f2)) {  // Реле 1
             if (db[kk::dht2HumRele_enabled].toInt() == 0)
-                data.dht2State = 0;  // принудительно выключаем реле
+                data.dhtTwo.State = 0;  // принудительно выключаем реле
             userDhtRelays();
             b.reload();
         }
         if (db[kk::dht2HumRele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
-                b.LED(kk::dht2Rele_led, "Cтатус >>", data.dht2Rel_on, sets::Colors::Gray, sets::Colors::Blue);
+                b.LED(kk::dht2Rele_led, "Cтатус >>", data.dhtTwo.Rel_on, sets::Colors::Gray, sets::Colors::Blue);
                 b.Label(" ");
             }
             b.Number(kk::dht2HumRele_startHum, "Включается, если ниже");
@@ -396,7 +396,7 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
-            b.LabelFloat(kk::floattempDS1, db[kk::DS1name], data.floattDS1, 1, sets::Colors::Aqua);  // DHT22 темп 1
+            b.LabelFloat(kk::floattempDS1, db[kk::DS1name], data.dsOne.tfloat, 1, sets::Colors::Aqua);  // DHT22 темп 1
             b.Label("°С");
         }
         if (b.Switch(kk::DS1Rele_enabled, "Охлаждение", nullptr, sets::Colors::Aqua)) {  // Реле 1
@@ -408,7 +408,7 @@ void build(sets::Builder &b) {
         if (db[kk::DS1Rele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
-                b.LED(kk::DS1Rele_led, "Cтатус >>", data.DS1Rel_on, sets::Colors::Gray, sets::Colors::Aqua);
+                b.LED(kk::DS1Rele_led, "Cтатус >>", data.dsOne.rel_on, sets::Colors::Gray, sets::Colors::Aqua);
                 b.Label(" ");
             }
             b.Number(kk::DS1Rele_startTemp, "Включается при превышении, °C");
@@ -418,7 +418,7 @@ void build(sets::Builder &b) {
         {
             sets::Row g(b);
             // b.LabelFloat(kk::floattemp1, "dht1", 1);
-            b.LabelFloat(kk::floattempDS2, db[kk::DS2name], data.floattDS2, 1, sets::Colors::Aqua);  // DHT22 темп 1
+            b.LabelFloat(kk::floattempDS2, db[kk::DS2name], data.dsTwo.tfloat, 1, sets::Colors::Aqua);  // DHT22 темп 1
             b.Label("°С");
         }
         if (b.Switch(kk::DS2Rele_enabled, "Нагрев", nullptr, sets::Colors::Aqua)) {  // Реле 1
@@ -430,7 +430,7 @@ void build(sets::Builder &b) {
         if (db[kk::DS2Rele_enabled].toInt() != 0) {
             {
                 sets::Row g(b);
-                b.LED(kk::DS2Rele_led, "Cтатус >>", data.DS2Rel_on, sets::Colors::Gray, sets::Colors::Aqua);
+                b.LED(kk::DS2Rele_led, "Cтатус >>", data.dsTwo.rel_on, sets::Colors::Gray, sets::Colors::Aqua);
                 b.Label(" ");
             }  // LED row
             b.Number(kk::DS2Rele_startTemp, "Включается, если ниже °C");
